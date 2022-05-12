@@ -1,0 +1,100 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+
+<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12" >
+                            <div class="card" align="center" style="width:800px;">
+                                <div class="card-body" align="center">
+<h2 align="center">Add employee</h2>
+<form  method="post" action="/addemployeecode">
+
+<div class="form-group row">
+                                            <label for="txt1" class="col-3 col-lg-2 col-form-label text-right">First Name</label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt1" type="text" name="fname" id="fname" required pattern="[A-Z a-z.]{3,25}" class="form-control">
+                                            </div>
+                                        </div>
+    <div class="form-group row">
+                                            <label for="txt2" class="col-3 col-lg-2 col-form-label text-right">Last Name</label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt2" type="text" name="lname" id="lname" required pattern="[A-Z a-z.]{3,25}" class="form-control">
+                                            </div>
+                                        </div>
+
+    <div class="form-group row">
+        <label for="txt2" class="col-3 col-lg-2 col-form-label text-right">Gender</label>
+    <label class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" value="male" checked name="radio-inline"  class="custom-control-input"><span class="custom-control-label">Male</span>
+                                            </label>
+                                            <label class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" value="female" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Female</span>
+                                            </label>
+    </div>
+
+    <div class="form-group row">
+                                            <label for="txt3" class="col-3 col-lg-2 col-form-label text-right">House name</label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt3" type="text" name="hname" id="hname" required pattern="[A-Z a-z.]{3,25}" class="form-control">
+                                            </div>
+                                        </div>
+    <div class="form-group row">
+                                            <label for="txt4" class="col-3 col-lg-2 col-form-label text-right"> Place</label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt4" type="text" name="place" id="place" required pattern="[A-Z a-z.]{3,25}" class="form-control">
+                                            </div>
+                                        </div>
+<div class="form-group row">
+                                            <label for="txt5" class="col-3 col-lg-2 col-form-label text-right"> Post</label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt5" type="text" name="post" id="post" required pattern="[A-Z a-z.]{3,25}" class="form-control">
+                                            </div>
+                                        </div>
+<div class="form-group row">
+                                            <label for="txt6" class="col-3 col-lg-2 col-form-label text-right"> Pin</label>
+                                            <div class="col-9 col-lg-10">
+
+                                                <input id="txt6" type="text" name="pin" id="pin" required pattern="[0-9]{6}" class="form-control">
+                                            </div>
+                                        </div>
+<div class="form-group row">
+                                            <label for="txt7" class="col-3 col-lg-2 col-form-label text-right"> Phone number</label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt7" type="text" name="phoneno" id="phoneno" required pattern="[6789][0-9]{9}" class="form-control">
+                                            </div>
+                                        </div>
+
+<div class="form-group row">
+                                            <label for="txt8" class="col-3 col-lg-2 col-form-label text-right">Email id</label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt8" type="text" name="emailid" id="emailid"  required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}" class="form-control">
+                                            </div>
+                                        </div>
+<div class="form-group row">
+                                            <label for="txt9" class="col-3 col-lg-2 col-form-label text-right">Username</label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt9" type="text" name="uname" id="uname"  required pattern="[A-Z a-z.]{3,25}" class="form-control">
+                                            </div>
+                                        </div>
+
+    <div class="form-group row">
+                                            <label for="txt10" class="col-3 col-lg-2 col-form-label text-right">Password</label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt10" type="password" name="password" id="password"  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required class="form-control">
+                                            </div>
+                                        </div>
+
+
+
+
+
+
+
+<input type="submit" value="Add" name="submit" class="btn btn-space btn-primary">
+
+</form>
+                                </div>
+                            </div>
+</div>
+
+
+{% endblock %}
+

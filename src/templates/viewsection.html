@@ -1,0 +1,44 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+<center>
+<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <div class="card">
+                                <h2 class="card-header">View section</h2>
+                                <div class="card-body">
+<form action="" method="post" >
+
+ 
+<div align="center">
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Sl No.</th>
+        <th>Genre</th>
+        <th>Location</th>
+        <th>&nbsp;</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+
+    {% for i in val %}
+
+    <tr>
+      <td>{{loop.index}}</td>
+        <td>&nbsp;{{i[1]}}</td>
+        <td>&nbsp;{{i[2]}}</td>
+        <td><u><a href="/updatesection?id={{i[0]}}" >Update</a></u></td>
+        <td><u><a href="/deletesection?id={{i[0]}}" >Delete</a></u></td></td>
+      </tr>
+
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+</form>
+</div>
+                            </div>
+                        </div>
+    </center>
+{% endblock %}

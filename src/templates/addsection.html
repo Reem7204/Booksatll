@@ -1,0 +1,29 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+<center>
+<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12" >
+                            <div class="card" align="center">
+                                <div class="card-body">
+<h2 align="center">Add section</h2>
+<form method="post" action="/addsectioncode">
+  <div class="form-group row">
+                                            <label for="txt1" class="col-3 col-lg-2 col-form-label text-right">Genre :</label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt1" name="Genre" type="text" required  class="form-control">
+                                            </div>
+                                        </div>
+  <div class="form-group row">
+                                            <label for="txt2" class="col-3 col-lg-2 col-form-label text-right">Location :</label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt2" name="Location" type="text" required  class="form-control">
+                                            </div>
+                                        </div>
+
+
+  <input name="submit" type="submit" value="Add" class="btn btn-space btn-primary"/>
+</form>
+                                </div>
+                            </div>
+</div>
+    </center>
+{% endblock %}
