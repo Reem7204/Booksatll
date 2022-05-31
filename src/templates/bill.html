@@ -1,0 +1,65 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>bill generation</title>
+</head>
+
+<body>
+<form id="form1" name="form1" method="post" action="">
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="card">
+                                <h5 class="card-header">Bill</h5>
+                                <div class="card-body">
+                                    <div class="table table-striped">
+Bill No. : {{no}} <br />
+Bill date : {{val1[18]}}
+
+<br />
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th scope="col">Sl.No.</th>
+    <th scope="col">Item</th>
+    <th scope="col">Quantity</th>
+    <th scope="col">Price</th>
+    <th scope="col">Amount</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for i in val1 %}
+  <tr>
+    <td>&nbsp;{{loop.index}}</td>
+    <td>&nbsp;{{i[1]}}</td>
+    <td>&nbsp;{{i[23]}}</td>
+    <td>&nbsp;{{i[8]}}</td>
+    <td>&nbsp;{{ i[8]*i[23] }}</td>
+  </tr>
+  {% endfor %}
+  <tr>
+
+    <td colspan="5"><div align="right">Total amount : 
+      
+        
+          {{val2[0]}}
+      
+      
+    </div></td>
+  </tr>
+</tbody>
+   </table>
+                                      <div class="col-sm-6 pl-0">
+                                                <p class="text-right">
+  <input type="submit" value="Print" onclick="window.print();" class="btn btn-space btn-primary">
+                                                </p>
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+  </div>
+</form>
+<br />
+
+
+</body>
+{% endblock %}

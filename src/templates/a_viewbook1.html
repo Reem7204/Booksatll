@@ -1,0 +1,46 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+
+<body>
+<form id="form1" name="form1" method="post" action="">
+
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="card">
+                                <h5 class="card-header">View book</h5>
+                                <div class="card-body">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Sl. No.</th>
+                                                <th scope="col">Title</th>
+                                                <th scope="col">Author</th>
+
+                                                <th scope="col">Number of books</th>
+                                              <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                       <tbody>
+                                       {% for i in val %}
+                                            <tr>
+
+                                                <td>{{loop.index}}</td>
+                                                <td>{{i[1]}}</td>
+                                                <td>{{i[2]}}</td>
+
+                                                <td>&nbsp;{{i[15]}}</td>
+
+                                              <td><a href="/a_viewbook2?id={{i[0]}}">
+
+        View</a>
+                                              </td>
+                                 </tr>
+                                        {% endfor %}
+
+                                       </tbody>
+</table>
+                                </div>
+                            </div>
+  </div>
+</form>
+</body>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'e_blankpage.html' %}
+{% block body %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>View book2</title>
+    <style>
+#main {
+  width: 800px;
+  height: 500px;
+
+  display: flex;
+}
+
+#main div {
+  -ms-flex: 1;  /* IE 10 */
+  flex: 1;
+}
+</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+.mySlides {display:none;}
+</style>
+
+
+</head>
+<body>
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="card">
+                                <h5 class="card-header">Details of the book</h5>
+                                <div class="card-body">
+<div id="main">
+
+   <div class="w3-content w3-display-container" style="background:url('static/bookpic/{{val[9]}}');">
+
+<img class="mySlides" src="static/bookpic/{{val[9]}}" style="width:400px;height:500px;" >
+  <img class="mySlides" src="static/bookpic/{{val[10]}}" style="width:400px;height:500px;">
+
+
+  <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+  <button class="w3-button w3-black w3-display-right" onclick="plusDivs(1)">&#10095;</button>
+</div>
+    <script>
+var slideIndex = 0;
+showDivs(slideIndex);
+
+function plusDivs(n) {
+  showDivs(slideIndex += n);
+}
+
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  if (n > x.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = x.length}
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  x[slideIndex-1].style.display = "block";
+}
+</script>
+    <!--<div >-->
+                                <!--<img src="static/bookpic/{{val[9]}}" style="width:300px;height:400px;">-->
+        <!--</div>-->
+<div style="margin:10px; font-size:15px;">
+Title : {{val[1]}} <br>
+Author : {{val[2]}} <br>
+Publisher : {{val[3]}} <br>
+Publisher date : {{val[4]}} <br>
+Genre : {{val[14]}} <br>
+Page number :{{val[7]}} <br>
+Price : {{val[8]}} <br>
+ISBN : {{val[12]}} <br>
+Description : {{val[6]}} <br>
+    <div class="form-group row text-right">
+                                            <div class="col col-sm-10 col-lg-9 offset-sm-1 offset-lg-0">
+                                                <form action="/updatebook" method="get">
+                                                    <button type="submit" class="btn btn-space btn-primary">Update</button>
+
+</form>
+                                            </div>
+                                        </div>
+    </div>
+
+</div>
+                                </div>
+                            </div>
+</div>
+</body>
+{% endblock %}

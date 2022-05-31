@@ -1,0 +1,82 @@
+
+{% extends 'e_blankpage.html' %}
+{% block body %}
+
+<body>
+
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="card">
+                                <h5 class="card-header">Add stock</h5>
+                                <div class="card-body">
+<form action="/addstockcode" method="post" id="validationform">
+<div class="form-group row">
+                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">
+    Genre </label>
+    <div class="col-12 col-sm-8 col-lg-6"><select name="genre" id="select"  class="form-control" required>
+<option value=""> select</option>
+    {% for i in val %}
+    <option value="{{i[0]}}" >{{i[1]}}</option>
+    {% endfor %}
+</select>
+        </div>
+                                        </div>
+
+<div class="form-group row">
+                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">
+                                                Title :</label>
+    <div class="col-12 col-sm-8 col-lg-6">
+    <select id="select2" class="form-control" name="title">
+</select>
+    </div>
+</div>
+<div class="form-group row">
+                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">
+
+                                                Number of books </label>
+    <div class="col-12 col-sm-8 col-lg-6"><input name="bno" type="text"  class="form-control"/>
+    </div>
+</div>
+        <div class="form-group row text-right">
+                                            <div class="col col-sm-10 col-lg-9 offset-sm-1 offset-lg-0">
+<input name="Submit" type="submit" value="Submit" class="btn btn-space btn-primary"/>
+
+    </div>
+</div>
+</form>
+                                    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    $("select#select").change(function() {
+
+        if ($(this).val() != 'default') {
+            var br = $('#select option:selected').text();
+            $.ajax({
+                type: 'POST',
+                url: "/gcode",
+                data: { brand: br },
+
+                success: function(response) {
+                var opt = '';
+    for (var i=0, l=response.length; i<l; i=i+2)
+    {
+        opt+='<option value="'+response[i]+'">'+response[i+1]+'</option>';
+
+}
+
+ $('select#select2').html('').prop('disabled',false)
+    $('select#select2').append(opt);
+                }
+            });
+        }
+        else {
+            $('select#select2').html('').prop('disabled',true);
+        }
+    });
+});
+</script>
+                                </div>
+                            </div>
+</div>
+</body>
+{% endblock %}

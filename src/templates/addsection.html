@@ -1,8 +1,8 @@
 {% extends 'blankpage.html' %}
 {% block body %}
-<center>
-<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12" >
-                            <div class="card" align="center">
+
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" >
+                            <div class="card"  >
                                 <div class="card-body">
 <h2 align="center">Add section</h2>
 <form method="post" action="/addsectioncode">
@@ -19,11 +19,12 @@
                                             </div>
                                         </div>
 
-
+ <p class="text-right">
   <input name="submit" type="submit" value="Add" class="btn btn-space btn-primary"/>
+ </p>
 </form>
                                 </div>
                             </div>
 </div>
-    </center>
+
 {% endblock %}
