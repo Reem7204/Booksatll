@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_bookrecommendation"
+            android:title="Book recommendation" />
+        <item
+            android:id="@+id/nav_myorder"
+            android:title="My order" />
+        <item
+            android:id="@+id/nav_booksuggestion"
+            android:title="Add book suggestion" />
+        <item
+            android:id="@+id/nav_addcomplaint"
+            android:title="Add complaint" />
+        <item
+            android:id="@+id/nav_viewprofile"
+            android:title="View profile" />
+    </group>
+</menu>

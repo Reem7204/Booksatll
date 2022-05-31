@@ -4,8 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>View book2</title>
-
     <style>
+
+
+    #image {
+        height: 500px;
+        width: 500px;
+        background:url('static/bookpic/{{val[9]}}');
+        background-size: 400px 500px;
+      }
 #main {
   width: 800px;
   height: 500px;
@@ -59,7 +66,7 @@ function showDivs(n) {
 
 <div id="main">
 
-   <div class="w3-content w3-display-container" style="background:url('static/bookpic/{{val[9]}}')">
+   <div class="w3-content w3-display-container" id="image">
 
   <img class="mySlides" src="static/bookpic/{{val[9]}}" style="width:400px;height:500px;" >
   <img class="mySlides" src="static/bookpic/{{val[10]}}" style="width:400px;height:500px;">
