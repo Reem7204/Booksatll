@@ -1,0 +1,44 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+<body>
+<form method="get" action="/edititem5">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="card">
+                                <h5 class="card-header">Book details</h5>
+                                <div class="card-body">
+
+
+    <div class="form-group row">
+  <label class="col-12 col-sm-3 col-form-label text-sm-right">Title  </label>
+  <div class="col-12 col-sm-8 col-lg-6">
+      <input type="text" id="tags" name="title" required readonly value="{{val[5]}}"></div>
+    </div>
+    <div class="form-group row">
+  <label class="col-12 col-sm-3 col-form-label text-sm-right">Author  </label>
+  <div class="col-12 col-sm-8 col-lg-6"><input name="author" type="text" id="author" readonly value="{{val[6]}}"/></div></div>
+    <div class="form-group row">
+  <label class="col-12 col-sm-3 col-form-label text-sm-right">
+
+    ISBN : </label>
+  <div class="col-12 col-sm-8 col-lg-6"><input name="isbn" type="text" id="isbn" readonly value="{{val[16]}}"/></div></div>
+    <div class="form-group row">
+  <label class="col-12 col-sm-3 col-form-label text-sm-right">Price  </label>
+  <div class="col-12 col-sm-8 col-lg-6"><input name="price" type="text" id="price" readonly value="{{val[12]}}"/></div></div>
+<div class="form-group row">
+  <label class="col-12 col-sm-3 col-form-label text-sm-right">Quantity  </label>
+  <div class="col-12 col-sm-8 col-lg-6"><input name="quantity" type="text" pattern="[0-9]{1,25}" title="Must be a number"/></div></div>
+  <div class="form-group row text-right">
+                                            <div class="col col-sm-10 col-lg-9 offset-sm-1 offset-lg-0">
+                                  <input name="Submit" value="Update" type="submit" class="btn btn-space btn-primary"/>
+                                            </div>
+  </div>
+                                </div>
+                            </div>
+</div>
+                    </div>
+                </div>
+</form>
+</body>
+{% endblock %}

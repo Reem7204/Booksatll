@@ -132,7 +132,7 @@ My Account</h5>
 
                                 </div>
 
-                                <a class="dropdown-item" href="/"><i class="fas fa-power-off mr-2"></i>Logout</a>
+                                <a class="dropdown-item" onclick="return confirm('Do you want to logout?')" href="/logout"><i class="fas fa-power-off mr-2"></i>Logout</a>
                             </div>
                         </li>
                     </ul>
@@ -196,10 +196,19 @@ My Account</h5>
                                     
                                 </div>
                             </li>
-                            <li class="nav-item ">
-                                <a class="nav-link" href="/dpublisherpurchase"  aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4"><!--<i class="fab fa-fw fa-wpforms"></i>-->Add publisher purchase</a>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-7" aria-controls="submenu-7">Add publisher purchase</a>
                                 <div id="submenu-7" class="collapse submenu" style="">
+                                    <ul class="nav flex-column">
 
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/dpublisherpurchase">New publisher</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/mypublisher">My publisher</a>
+                                        </li>
+
+                                    </ul>
                                 </div>
                             </li>
                             <li class="nav-item ">

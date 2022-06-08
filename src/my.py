@@ -6,6 +6,15 @@ from datetime import datetime,timedelta
 from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.secret_key="sdsd"
+import functools
+
+def login_required(func):
+    @functools.wraps(func)
+    def secure_function():
+        if "l_id" not in session:
+            return render_template('login1.html')
+        return func()
+    return secure_function
 
 
 @app.route('/')
@@ -38,35 +47,82 @@ def logincode():
 
 
 @app.route('/blankpage')
+
 def blankpage():
     return render_template("blankpage.html")
 
 @app.route('/adminhome')
+
 def adminhome():
     return render_template("adminhome.html")
 
 @app.route('/employeehome')
+
 def employeehome():
     return render_template("employeehome.html")
 
 
 @app.route('/addsection')
+
 def addsection():
     return render_template("addsection.html")
 
 @app.route('/addemployee')
+
 def addemployee():
     return render_template("addemployee.html")
 
+@app.route('/addpurchasebook')
+
+def addpurchasebook():
+    id = request.args.get('id')
+    d = datetime.now()
+
+    qry = "insert into dpp_master(`d_p`,date,`status`) values (%s,%s,'pending')"
+    val = (id,d)
+    i = iud(qry,val)
+    session['d4_id'] = i
+    print(id)
+    qry = "select * from section"
+    res = selectall(qry)
+    return render_template("dpublisherpurchase2.html",val1=res)
+
 
 @app.route('/dpublisherpurchase')
+
 def dpublisherpurchase():
     qry = "select * from section"
     res = selectall(qry)
     return render_template("dpublisherpurchase.html",val1=res)
 
 
+
+
+
+
+@app.route('/dpublisherpurchase3', methods=["POST", "GET"])
+
+def dpublisherpurchase3():
+
+    if request.method == "GET":
+        qry2 = "select * from section"
+        res2 = selectall(qry2)
+
+        qry = "select * from book"
+        languages=selectall(qry)
+
+        qry0 = "SELECT * FROM `dpp_master` JOIN `dpp_detail` ON`dpp_master`.`du_id`=`dpp_detail`.`du_id` WHERE `dpp_master`.du_id=%s"
+        val0 = (session['d2_id'])
+        res0 = selectall2(qry0, val0)
+
+        qry1="SELECT SUM(`quantity`*`price`) FROM `dpp_detail` WHERE du_id=%s"
+        res1=selectone(qry1,val0)
+
+        return render_template("dpublisherpurchase2.html",languages=languages,val=res0,p=res1[0],val1=res2)
+
+
 @app.route('/dpuinsert')
+
 def dpuinsert():
     b = request.args.get('Submit')
     if b == "Add book":
@@ -82,20 +138,31 @@ def dpuinsert():
             title = request.args.get('title')
             quantity = request.args.get('quantity')
 
-            qry2 = "INSERT INTO `dup_master` (`name`,`phoneno`,`emailid`,`date`,`status`) VALUES (%s,%s,%s,%s,'pending')"
-            val2 = (name,phno,emailid,d)
-            id = iud(qry2, val2)
+            qry6 = "select * from book join stockmanage on book.b_id=stockmanage.b_id where book.title=%s"
+            val6 = (title)
+            res6 = selectone(qry6,val6)
+            if int(quantity)<res6[16]:
+                print(int(quantity))
+                a=res6[16]-int(quantity)
 
+                qry7 = "update`stockmanage` set noofbook=%s where b_id=%s"
+                val7 = (a,res6[15])
+                iud(qry7,val7)
+                qry2 = "INSERT INTO `dup_master` (`name`,`phoneno`,`emailid`,`date`,`status`) VALUES (%s,%s,%s,%s,'pending')"
+                val2 = (name,phno,emailid,d)
+                id = iud(qry2, val2)
 
-            qry = "SELECT * FROM book where title=%s"
-            val = (title)
-            res = selectone(qry, val)
+                qry = "SELECT * FROM book where title=%s"
+                val = (title)
+                res = selectone(qry, val)
 
-            qry3 = "INSERT INTO `dup_detail` (`id`,`dp_id`,`bid`,`quantity`) VALUES (NULL,%s,%s,%s)"
-            val3 = (id, res[0], quantity)
-            session['d1_id'] = id
-            iud(qry3, val3)
-            return '''<script>alert('Item entered');window.location='/duserpurchase2';</script>'''
+                qry3 = "INSERT INTO `dup_detail` (`id`,`dp_id`,`bid`,`quantity`) VALUES (NULL,%s,%s,%s)"
+                val3 = (id, res[0], quantity)
+                session['d1_id'] = id
+                iud(qry3, val3)
+                return '''<script>alert('Item entered');window.location='/duserpurchase2';</script>'''
+            else:
+                return '''<script>alert('Out of Stock');window.location='/duserpurchase';</script>'''
 
 
         elif res[1]=='pending':
@@ -104,24 +171,35 @@ def dpuinsert():
             title = request.args.get('title')
 
             quantity = request.args.get('quantity')
+            qry6 = "select * from book join stockmanage on book.b_id=stockmanage.b_id where book.title=%s"
+            val6 = (title)
+            res6 = selectone(qry6, val6)
+            if int(quantity) < res6[16]:
+                a = res6[16] - int(quantity)
 
-            qry = "SELECT * FROM book where title=%s"
-            val = (title)
-            res = selectone(qry,val)
-            print(res)
+                qry7 = "update`stockmanage` set noofbook=%s where b_id=%s"
+                val7 = (a, res6[15])
+                iud(qry7, val7)
 
-            q = "SELECT * FROM `dup_master` WHERE `status`='pending' AND `dp_id` IN(SELECT MAX(dp_id) FROM `dup_master`)"
+                qry = "SELECT * FROM book where title=%s"
+                val = (title)
+                res = selectone(qry,val)
+                print(res)
 
-            r = selectone2(q)
-            print(r)
+                q = "SELECT * FROM `dup_master` WHERE `status`='pending' AND `dp_id` IN(SELECT MAX(dp_id) FROM `dup_master`)"
 
-            qry3 = "INSERT INTO `dup_detail` (`id`,`dp_id`,`bid`,`quantity`) VALUES (NULL,%s,%s,%s)"
-            val3 = (r[0],res[0],quantity)
+                r = selectone2(q)
+                print(r)
 
-            print(r[0])
-            iud(qry3,val3)
+                qry3 = "INSERT INTO `dup_detail` (`id`,`dp_id`,`bid`,`quantity`) VALUES (NULL,%s,%s,%s)"
+                val3 = (r[0],res[0],quantity)
 
-            return '''<script>alert('Item entered');window.location='/duserpurchase2';</script>'''
+                print(r[0])
+                iud(qry3,val3)
+
+                return '''<script>alert('Item entered');window.location='/duserpurchase2';</script>'''
+            else:
+                return '''<script>alert('Out of Stock');window.location='/duserpurchase2';</script>'''
         else:
             return '''<script>alert('Error');window.location='/duserpurchase';</script>'''
 
@@ -136,8 +214,10 @@ def dpuinsert():
 
 
 @app.route('/dpuinsert1')
+
 def dpuinsert1():
     b = request.args.get('Submit')
+    print(b)
     if b == "Add book":
         q = "SELECT MAX(du_id),`status` FROM `dpp_master` WHERE `du_id` IN(SELECT MAX(du_id) FROM `dpp_master`)"
 
@@ -156,14 +236,21 @@ def dpuinsert1():
             author = request.args.get('author')
             price = request.args.get('price')
 
-            qry2 = "INSERT INTO `dpp_master` (`name`,`address`,`phoneno`,`emailid`,`date`,`status`) VALUES (%s,%s,%s,%s,%s,'pending')"
-            val2 = (name,address,phno,emailid,d)
-            id = iud(qry2, val2)
+            qry2 = "INSERT INTO `d_publisher` (`name`,`address`,`phoneno`,`emailid`) VALUES (%s,%s,%s,%s)"
+            val2 = (name,address,phno,emailid)
+            id1 = iud(qry2, val2)
 
+
+
+            qry4 = "insert into `dpp_master` (`d_p`,`date`,`status`) values (%s,%s,'pending')"
+            val4 = (id1,d)
+            id = iud(qry4,val4)
+            session['d4_id'] = id
             qry3 = "INSERT INTO `dpp_detail` (`id`,`du_id`,`isbn`,`s_id`,`title`,`author`,`price`,`quantity`) VALUES (NULL,%s,%s,%s,%s,%s,%s,%s)"
             val3 = (id,isbn,genre,title,author,price,quantity)
             session['d2_id'] = id
-            iud(qry3, val3)
+            d2 = iud(qry3, val3)
+
             return '''<script>alert('Item entered');window.location='/dpublisherpurchase2';</script>'''
 
 
@@ -176,33 +263,88 @@ def dpuinsert1():
             author = request.args.get('author')
             price = request.args.get('price')
 
-            q = "SELECT * FROM `dpp_master` WHERE `status`='pending' AND `du_id` IN(SELECT MAX(du_id) FROM `dpp_master`)"
-
-            r = selectone2(q)
-            print(r)
-
+            # q = "SELECT * FROM `dpp_master` WHERE `status`='pending' AND `du_id` IN(SELECT MAX(du_id) FROM `dpp_master`)"
+            #
+            # r = selectone2(q)
+            # print(r)
+            r = session['d4_id']
             qry3 = "INSERT INTO `dpp_detail` (`id`,`du_id`,`isbn`,`s_id`,`title`,`author`,`price`,`quantity`) VALUES (NULL,%s,%s,%s,%s,%s,%s,%s)"
-            val3 = (r[0],isbn,genre,title,author,price,quantity)
+            val3 = (r,isbn,genre,title,author,price,quantity)
 
-            print(r[0])
+            print(r)
             iud(qry3,val3)
 
             return '''<script>alert('Item entered');window.location='/dpublisherpurchase2';</script>'''
         else:
             return '''<script>alert('Error');window.location='/dpublisherpurchase';</script>'''
-
-    else:
+    # elif b == "Edit":
+    #     id = request.args.get('id')
+    #     q = request.args.get('qty')
+    #     print(id)
+    #     qry = "Update dpp_detail set `quantity`=%s where id=%s"
+    #     val = (q, id)
+    #     iud(qry, val)
+    #     return '''<script>alert('Item updated successfully');window.location='/dpublisherpurchase2';</script>'''
+    elif b=="Save":
         qry6 = "select MAX(du_id) from dpp_master"
         res6 = selectone2(qry6)
         qry5 = "Update dpp_master set `status`='finished' where du_id=%s"
         val5 = (res6[0])
+        print(res6[0])
         iud(qry5,val5)
         return '''<script>alert('Saved successfully');window.location='/dpublisherpurchase';</script>'''
 
+@app.route('/edititem2')
 
+def edititem2():
+    id = request.args.get('id')
+    session['editppid']=id
+    qry = "SELECT * FROM `dpp_detail` JOIN `section` ON `dpp_detail`.`s_id`=`section`.`s_id` WHERE `dpp_detail`.`id`=%s"
+    val = (id)
+    res = selectall2(qry,val)
+    qry1 = "select * from section"
+    res1 = selectall(qry1)
+    return render_template("editpp.html",val=res,val1=res1,id=res[0][3])
 
+@app.route('/edititem3')
+
+def edititem3():
+    i = request.args.get('isbn')
+    g = request.args.get('genre')
+    t = request.args.get('title')
+    a = request.args.get('author')
+    p = request.args.get('price')
+    q = request.args.get('quantity')
+    print(q)
+    qry = "Update dpp_detail set isbn=%s,s_id=%s,title=%s,author=%s,price=%s,`quantity`=%s where id=%s"
+    val = (i,g,t,a,p,q,session['editppid'])
+    iud(qry, val)
+    return '''<script>alert('Item updated successfully');window.location='/dpublisherpurchase2';</script>'''
+
+@app.route('/edititem4')
+
+def edititem4():
+    id = request.args.get('id')
+    session['edititem']=id
+    qry = "SELECT * FROM `dup_detail` JOIN `book` ON `dup_detail`.`bid`=`book`.`b_id` WHERE `dup_detail`.`id`=%s"
+    val = (id)
+    res = selectone(qry,val)
+
+    return render_template("qty2.html",val=res)
+
+@app.route('/edititem5')
+
+def edititem5():
+
+    q = request.args.get('quantity')
+    print(q)
+    qry = "Update dup_detail set `quantity`=%s where id=%s"
+    val = (q,session['edititem'])
+    iud(qry, val)
+    return '''<script>alert('Item updated successfully');window.location='/duserpurchase2';</script>'''
 
 @app.route('/bookdetails',methods=['get','post'])
+
 def bookdetails():
     title = request.form['brand']
     print(title)
@@ -228,6 +370,7 @@ def bookdetails():
 
 
 @app.route('/duserpurchase', methods=["POST", "GET"])
+
 def duserpurchase():
 
     if request.method == "GET":
@@ -257,6 +400,7 @@ def duserpurchase2():
 
 
 @app.route('/dpublisherpurchase2', methods=["POST", "GET"])
+
 def dpublisherpurchase2():
 
     if request.method == "GET":
@@ -267,7 +411,7 @@ def dpublisherpurchase2():
         languages=selectall(qry)
 
         qry0 = "SELECT * FROM `dpp_master` JOIN `dpp_detail` ON`dpp_master`.`du_id`=`dpp_detail`.`du_id` WHERE `dpp_master`.du_id=%s"
-        val0 = (session['d2_id'])
+        val0 = (session['d4_id'])
         res0 = selectall2(qry0, val0)
 
         qry1="SELECT SUM(`quantity`*`price`) FROM `dpp_detail` WHERE du_id=%s"
@@ -277,6 +421,7 @@ def dpublisherpurchase2():
 
 
 @app.route('/addbook')
+
 def addbook():
     d = datetime.now()
     d1 = d.date()
@@ -287,6 +432,7 @@ def addbook():
     return render_template("addbook.html",val1=d1,val=res)
 
 @app.route('/addstock')
+
 def addstock():
     qry = "select * from section"
     res = selectall(qry)
@@ -296,18 +442,19 @@ def addstock():
 
 
 @app.route('/gcode',methods=['get','post'])
+
 def gcode():
     genre = request.form['brand']
-    print(genre,"******************************")
-    qry = "SELECT book.* FROM book JOIN section on book.s_id=section.s_id where section.name=%s"
+
+    qry = "SELECT book.* FROM book JOIN section on book.s_id=section.s_id where section.name=%s and `book`.`status`!='Removed'"
     val = (genre)
     res2 = selectall2(qry,val)
-    print(res2)
+
     lis = [0, 'select']
     for r in res2:
         lis.append(r[0])
         lis.append(r[1])
-    print(lis)
+
     resp = make_response(jsonify(lis))
     resp.status_code = 200
     resp.headers['Access-Control-Allow-Origin'] = '*'
@@ -315,16 +462,26 @@ def gcode():
 
 
 @app.route('/deleteitem')
+
 def deleteitem():
     did=request.args.get('id')
-
+    print(did)
     qry="delete from dup_detail where id=%s"
     val=(did)
     iud(qry,val)
 
+
     return '''<script>alert('Deleted item successfully');window.location='/duserpurchase2';</script>'''
 
+
+
+
+
+
+
+
 @app.route('/deleteitem2')
+
 def deleteitem2():
     did=request.args.get('id')
 
@@ -336,6 +493,7 @@ def deleteitem2():
 
 
 @app.route('/deletesection')
+
 def deletesection():
     sid=request.args.get('id')
 
@@ -346,6 +504,7 @@ def deletesection():
     return '''<script>alert('Deleted successfully');window.location='/viewsection';</script>'''
 
 @app.route('/deletebook')
+
 def deletebook():
     bid=request.args.get('id')
 
@@ -356,6 +515,7 @@ def deletebook():
 
 
 @app.route('/deleteemployee')
+
 def deleteemployee():
     eid=request.args.get('id')
 
@@ -370,6 +530,7 @@ def deleteemployee():
 
 
 @app.route('/updatesection')
+
 def updatesection():
     sid=request.args.get('id')
     session['sid']=sid
@@ -380,6 +541,7 @@ def updatesection():
     return render_template("updatesection.html",val=res)
 
 @app.route('/updateemployee')
+
 def updateemployee():
     eid=request.args.get('id')
     session['eid']=eid
@@ -390,7 +552,8 @@ def updateemployee():
     return render_template("updateemployee.html",val=res)
 
 
-@app.route('/viewbill')
+@app.route('/viewbill',methods=['post','get'])
+
 def viewbill():
     qry0 = "SELECT * FROM book JOIN `dup_master` JOIN `dup_detail` ON `book`.`b_id`=`dup_detail`.`bid` AND `dup_master`.`dp_id`=`dup_detail`.`dp_id` WHERE `dup_master`.dp_id=%s"
     val0 = (session['d1_id'])
@@ -404,6 +567,7 @@ def viewbill():
 
 
 @app.route('/updatebook')
+
 def updatebook():
 
     qry = "select * from book where b_id=%s"
@@ -416,8 +580,33 @@ def updatebook():
     return render_template("updatebook.html", val=res,val1=res1,id=res[5])
 
 
+@app.route('/editbook')
+
+def editbook():
+    bid = request.args.get('id')
+    session['b']=bid
+    qry = "select * from book join stockmanage on book.b_id=stockmanage.b_id where stockmanage.sm_id=%s"
+    val = (bid)
+    res = selectone(qry,val)
+    print(res)
+
+    return render_template("qty.html", val=res)
+
+
+@app.route('/editbook1')
+
+def editbook1():
+
+    qty = request.args.get('quantity')
+    qry = "update stockmanage set noofbook=%s where sm_id=%s"
+    val = (qty,session['b'])
+    iud(qry,val)
+    return '''<script>alert('Updated quantity');window.location='/viewbook';</script>'''
+
+
 
 @app.route('/updatebookcode',methods=['post'])
+
 def updatebookcode():
     try:
         title = request.form['title']
@@ -466,6 +655,7 @@ def updatebookcode():
 
 
 @app.route('/updateemployeecode',methods=['post'])
+
 def updateemployeecode():
     fname=request.form['fname']
     lname = request.form['lname']
@@ -486,6 +676,7 @@ def updateemployeecode():
 
 
 @app.route('/updatesectioncode',methods=['post'])
+
 def updatesectioncode():
     genre = request.form['Genre']
     location = request.form['Location']
@@ -495,47 +686,59 @@ def updatesectioncode():
     return '''<script>alert('Updated successfully');window.location='/viewsection';</script>'''
 
 @app.route('/viewemployee')
+
 def viewemployee():
     qry="SELECT * FROM `employee`"
     res=selectall(qry)
     return  render_template("viewemployee.html",val=res)
 
+@app.route('/mypublisher')
+
+def mypublisher():
+    qry="SELECT * FROM `d_publisher`"
+    res=selectall(qry)
+    return  render_template("mypublisher.html",val=res)
+
 
 @app.route('/viewbook')
+
 def viewbook():
-    qry="SELECT * FROM book LEFT JOIN stockmanage ON book.b_id=stockmanage.b_id WHERE book.b_id NOT IN(SELECT b_id FROM book WHERE `status`='Removed') "
+    qry="SELECT * FROM book LEFT JOIN stockmanage ON book.b_id=stockmanage.b_id WHERE book.b_id NOT IN(SELECT b_id FROM book WHERE `status`='Removed')"
     res=selectall(qry)
     return  render_template("viewbook.html",val=res)
 
 
 @app.route('/a_viewbook1')
+
 def a_viewbook1():
-    qry="select * from book left join stockmanage on book.b_id=stockmanage.b_id"
+    qry="select * from book left join stockmanage on book.b_id=stockmanage.b_id WHERE book.b_id NOT IN(SELECT b_id FROM book WHERE `status`='Removed')"
     res=selectall(qry)
     return  render_template("a_viewbook1.html",val=res)
 
 
 @app.route('/a_viewbook2')
+
 def a_viewbook2():
     bid = request.args.get('id')
     session['bid'] = bid
-    qry = "SELECT * FROM `book` JOIN `section` on `book`.`s_id`=`section`.`s_id` where b_id=%s"
-    val = (bid)
-    res = selectone(qry,val)
+    qry = "SELECT `book`.*,section.*,DATE_FORMAT(book.p_year,'%d-%m-%Y') FROM `book` JOIN `section` ON `book`.`s_id`=`section`.`s_id` WHERE `book`.b_id='"+str(bid)+"'"
+
+    res = selectone2(qry)
     return  render_template("a_viewbook2.html",val=res)
 
 
 @app.route('/viewbook2')
+
 def viewbook2():
     bid = request.args.get('id')
     session['bid'] = bid
-    qry = "SELECT * FROM `book` JOIN `section` on `book`.`s_id`=`section`.`s_id` where `book`.b_id=%s"
-    val = (bid)
-    res = selectone(qry,val)
+    qry = "SELECT `book`.*,section.*,DATE_FORMAT(book.p_year,'%d-%m-%Y') FROM `book` JOIN `section` ON `book`.`s_id`=`section`.`s_id` WHERE `book`.b_id='"+str(bid)+"'"
+    res = selectone2(qry)
     return  render_template("viewbook2.html",val=res)
 
 
 @app.route('/viewsection')
+
 def viewsection():
     qry="SELECT * FROM `section`"
     res=selectall(qry)
@@ -545,38 +748,44 @@ def viewsection():
 
 
 @app.route('/addstockcode',methods=['post'])
+
 def addstockcode():
 
     t = request.form['title']
     bno = request.form['bno']
-    d = datetime.datetime.today()
-    q = "select * from stockmanage where b_id=%s "
-    v = (t)
-    r = selectone(q,v)
-    print(r)
-    if r is None:
-        qry = "insert into stock values (NULL,%s,%s,%s)"
-        val = (t,d,bno)
-        iud(qry,val)
-        qry2 = "insert into stockmanage value (NULL,%s,%s)"
-        val2 = (t,bno)
-        iud(qry2,val2)
-    else :
-        qry = "insert into stock values (NULL,%s,%s,%s)"
-        val = (t, d, bno)
-        iud(qry, val)
-        qry2 = "select * from stockmanage where b_id=%s"
-        val2 = (t)
-        res2 = selectone(qry2,val2)
-        b = int(res2[2])+int(bno)
-        qry3 = "Update stockmanage set noofbook=%s where b_id=%s  "
-        val3 = (b,t)
-        iud(qry3,val3)
+    d = datetime.now()
+    print(t)
+    if t != '0':
+        q = "select * from stockmanage where b_id=%s "
+        v = (t)
+        r = selectone(q,v)
 
-    return '''<script>alert('Added successfully');window.location='/addstock';</script>'''
+        if r is None:
+            qry = "insert into stock values (NULL,%s,%s,%s)"
+            val = (t,d,bno)
+            iud(qry,val)
+            qry2 = "insert into stockmanage value (NULL,%s,%s)"
+            val2 = (t,bno)
+            iud(qry2,val2)
+        else :
+            qry = "insert into stock values (NULL,%s,%s,%s)"
+            val = (t, d, bno)
+            iud(qry, val)
+            qry2 = "select * from stockmanage where b_id=%s"
+            val2 = (t)
+            res2 = selectone(qry2,val2)
+            b = int(res2[2])+int(bno)
+            qry3 = "Update stockmanage set noofbook=%s where b_id=%s  "
+            val3 = (b,t)
+            iud(qry3,val3)
+
+        return '''<script>alert('Added successfully');window.location='/addstock';</script>'''
+    else:
+        return '''<script>alert('Select a book title');window.location='/addstock';</script>'''
 
 
 @app.route('/addbookcode',methods=['post'])
+
 def addbookcode():
     title = request.form['title']
     author = request.form['author']
@@ -589,21 +798,30 @@ def addbookcode():
     isbn = request.form['isbn']
     url = request.form['url']
 
-    pic1 = request.files['pic1']
-    pic1name = secure_filename(pic1.filename)
-    pic1.save(os.path.join('static/bookpic',pic1name))
+    qry1 = "Select * from book where `isbn`=%s"
+    val1 = (isbn)
+    res = selectall2(qry1,val1)
+    print(res)
+    if res is ():
+        pic1 = request.files['pic1']
+        pic1name = secure_filename(pic1.filename)
+        pic1.save(os.path.join('static/bookpic', pic1name))
 
-    pic2 = request.files['pic2']
-    pic2name = secure_filename(pic2.filename)
-    pic2.save(os.path.join('static/bookpic', pic2name))
+        pic2 = request.files['pic2']
+        pic2name = secure_filename(pic2.filename)
+        pic2.save(os.path.join('static/bookpic', pic2name))
 
-    qry = "insert into book values(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'Present')"
-    val = (title,author,publisher,publisher_d,genre,description,page,price,pic1name,pic2name,url,isbn)
-    iud(qry,val)
-    return '''<script>alert('Added successfully');window.location='/addbook';</script>'''
+        qry = "insert into book values(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'Present')"
+        val = (title, author, publisher, publisher_d, genre, description, page, price, pic1name, pic2name, url, isbn)
+        iud(qry, val)
+        return '''<script>alert('Added successfully');window.location='/addbook';</script>'''
+
+    else:
+        return '''<Script>alert("Isbn already present");window.location='/addbook';</script>'''
 
 
 @app.route('/addsectioncode',methods=['post'])
+
 def addsectioncode():
     genre = request.form['Genre']
     location = request.form['Location']
@@ -616,6 +834,7 @@ def addsectioncode():
 
 
 @app.route('/addemployeecode',methods=['post'])
+
 def addemployeecode():
 
     fname=request.form['fname']
@@ -643,6 +862,11 @@ def addemployeecode():
         return '''<script>alert('Added successfully');window.location='/addemployee';</script>'''
     else:
         return '''<script>alert('Confirm password does not match');window.location='/addemployee';</script>'''
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
 
 
 app.run(debug=True)

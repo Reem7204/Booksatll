@@ -1,0 +1,75 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+<body>
+
+
+<form method="get" action="/edititem3" enctype="multipart/form-data" id="validationform">
+
+
+    <!--<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">-->
+                            <!--<div class="card">-->
+                                <!--<h5 class="card-header">Publisher details</h5>-->
+                                <!--<div class="card-body">-->
+<!--<div class="form-group row">-->
+  <!--<label class="col-12 col-sm-3 col-form-label text-sm-right">Name : </label>-->
+  <!--<div class="col-12 col-sm-8 col-lg-6"><input name="name" type="text" class="form-control"/></div></div>-->
+<!--<div class="form-group row">-->
+  <!--<label class="col-12 col-sm-3 col-form-label text-sm-right">Address : </label>-->
+  <!--<div class="col-12 col-sm-8 col-lg-6"><input name="address" type="text" class="form-control"/></div></div>-->
+ <!--<div class="form-group row">-->
+  <!--<label class="col-12 col-sm-3 col-form-label text-sm-right">Phone number : </label>-->
+  <!--<div class="col-12 col-sm-8 col-lg-6"><input name="phoneno" type="text" class="form-control"/></div></div>-->
+  <!--<div class="form-group row">-->
+  <!--<label class="col-12 col-sm-3 col-form-label text-sm-right">Emailid : </label>-->
+  <!--<div class="col-12 col-sm-8 col-lg-6"><input name="emailid" type="text" class="form-control"/></div></div>-->
+
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="card">
+                                <h5 class="card-header">Book details</h5>
+                                <div class="card-body">
+
+
+
+<div class="form-group row">
+  <label class="col-12 col-sm-3 col-form-label text-sm-right">ISBN : </label>
+  <div class="col-12 col-sm-8 col-lg-6"><input name="isbn" type="text" value="{{val[0][2]}}" class="form-control"/></div></div>
+
+<div class="form-group row">
+  <label class="col-12 col-sm-3 col-form-label text-sm-right">Genre : </label>
+  <div class="col-12 col-sm-8 col-lg-6"><select name="genre"  value="{{val[0][9]}}" class="form-control">
+       <option></option>
+                                                    {% for i in val1 %}
+                                                             <option value="{{i[0]}}" {% if id|string==i[0]|string %} selected {% endif %}>{{i[1]}}</option>
+                                                    {% endfor %}
+  </select></div></div>
+
+<div class="form-group row">
+  <label class="col-12 col-sm-3 col-form-label text-sm-right">Title :</label>
+  <div class="col-12 col-sm-8 col-lg-6"><input name="title" type="text" value="{{val[0][4]}}" class="form-control"/></div></div>
+
+<div class="form-group row">
+  <label class="col-12 col-sm-3 col-form-label text-sm-right">Author : </label>
+  <div class="col-12 col-sm-8 col-lg-6"><input name="author" type="text" value="{{val[0][5]}}" class="form-control"/></div></div>
+<div class="form-group row">
+  <label class="col-12 col-sm-3 col-form-label text-sm-right">Price : </label>
+  <div class="col-12 col-sm-8 col-lg-6"><input name="price" type="text" value="{{val[0][6]}}" class="form-control"/></div></div>
+<div class="form-group row">
+  <label class="col-12 col-sm-3 col-form-label text-sm-right">Quantity : </label>
+  <div class="col-12 col-sm-8 col-lg-6"><input name="quantity" type="text" value="{{val[0][7]}}" class="form-control" /></div></div>
+   <div class="form-group row text-right">
+                                            <div class="col col-sm-10 col-lg-9 offset-sm-1 offset-lg-0">
+                                  <input name="Submit" value="Edit" type="submit" class="btn btn-space btn-primary"/>
+                                            </div>
+  </div>
+
+                            </div>
+                            </div>
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+                </div>
+    </form>
+</body>
+{% endblock %}

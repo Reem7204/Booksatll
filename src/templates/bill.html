@@ -3,17 +3,30 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>bill generation</title>
+     <script>
+        function printDiv() {
+            var divContents = document.getElementById("GFG").innerHTML;
+            var a = window.open('', '', 'height=500, width=500');
+            a.document.write('<html>');
+            a.document.write('<body >');
+            a.document.write(divContents);
+            a.document.write('</body></html>');
+            a.document.close();
+            a.print();
+        }
+    </script>
 </head>
 
 <body>
 <form id="form1" name="form1" method="post" action="">
-  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" id="GFG">
                             <div class="card">
                                 <h5 class="card-header">Bill</h5>
                                 <div class="card-body">
                                     <div class="table table-striped">
-Bill No. : {{no}} <br />
-Bill date : {{val1[18]}}
+
+Bill No. : {{val1[0][14]}} <br>
+Bill date : {{val1[0][18]}}
 
 <br />
 <table class="table table-striped">
@@ -48,16 +61,18 @@ Bill date : {{val1[18]}}
   </tr>
 </tbody>
    </table>
-                                      <div class="col-sm-6 pl-0">
-                                                <p class="text-right">
-  <input type="submit" value="Print" onclick="window.print();" class="btn btn-space btn-primary">
-                                                </p>
-                                      </div>
+
                                     </div>
                                 </div>
                             </div>
   </div>
+
 </form>
+<div class="col-sm-6 pl-0">
+                                                <p class="text-right">
+  <input type="submit" value="Print" onclick="printDiv()" class="btn btn-space btn-primary">
+                                                </p>
+                                      </div>
 <br />
 
 
