@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Custom4">
+
+
+
+
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:elevation="5dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:dividerPadding="10dp"
+            android:padding="10dp"
+
+            >
+
+            <ImageView
+                android:id="@+id/imgbook2"
+                android:layout_width="110dp"
+                android:layout_height="115dp"
+                android:src="@drawable/b_icon"
+                android:scaleType="fitCenter"/>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginStart="10dp">
+
+                <TextView
+                    android:id="@+id/title4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Title"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:textColor="#212121"/>
+                <TextView
+                    android:id="@+id/author4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Author"
+                    android:textColor="#424242"
+                    android:textSize="16dp"/>
+                <TextView
+                    android:id="@+id/rating4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rating"
+                    android:textColor="#424242"
+                    android:textSize="16dp"/>
+                <TextView
+                    android:id="@+id/price4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$2000/-"
+                    android:textColor="#424242"
+                    android:textSize="16dp"/>
+
+                <!--                <GridLayout-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:rowCount="2"-->
+                <!--                    android:columnCount="2"-->
+                <!--                    android:layout_marginTop="5dp"-->
+                <!--                    android:useDefaultMargins="true"-->
+                <!--                    >-->
+                <!--                    <TextView-->
+                <!--                        android:id="@+id/tvroom"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:text="5 Rooms" />-->
+                <!--                    <TextView-->
+                <!--                        android:id="@+id/tvhall"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:text="2 Halls" />-->
+
+                <!--                    <TextView-->
+                <!--                        android:id="@+id/tvbalcony"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:text="4 Balcony" />-->
+                <!--                    <TextView-->
+                <!--                        android:id="@+id/tvbathroom"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:text="6 Bathrooms" />-->
+                <!--                    <TextView-->
+                <!--                        android:id="@+id/tvmodel"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:text="BHK" />-->
+                <!--                    <TextView-->
+                <!--                        android:id="@+id/tvfloor"-->
+                <!--                        android:layout_width="wrap_content"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:text="Ground" />-->
+                <!--                </GridLayout>-->
+
+
+
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

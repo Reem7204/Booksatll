@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.book">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/b_icon"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/b_icon"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Book"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".custom5"
+            android:exported="false" />
+        <activity
+            android:name=".Acceptedrequest"
+            android:exported="false" />
+        <activity
+            android:name=".Deliverydate"
+            android:exported="false" />
+        <activity
+            android:name=".Addtocart"
+            android:exported="false" />
+        <activity
+            android:name=".bookrecommendation"
+            android:exported="false" />
+        <activity
+            android:name=".Custom4"
+            android:exported="false" />
+        <activity
+            android:name=".Mycart"
+            android:exported="false" />
+        <activity
+            android:name=".Acceptrequest"
+            android:exported="false" />
+        <activity
+            android:name=".Suggestions"
+            android:exported="false" />
+        <activity
+            android:name=".Custom3"
+            android:exported="false" />
+        <activity
+            android:name=".Viewreview"
+            android:exported="false" />
+
+        <service android:name=".Notify" />
+
+        <activity
+            android:name=".Update_image"
+            android:exported="false" />
+        <activity
+            android:name=".Updatebook"
+            android:exported="false" />
+        <activity
+            android:name=".cus_viewbook2"
+            android:exported="false" />
+        <activity
+            android:name=".Custom2"
+            android:exported="false" />
+        <activity
+            android:name=".viewadminrequest"
+            android:exported="false" />
+        <activity
+            android:name=".p_viewbook2"
+            android:exported="false" />
+        <activity
+            android:name=".p_viewbook"
+            android:exported="false" />
+        <activity
+            android:name=".cus_bookdetail"
+            android:exported="false" />
+        <activity
+            android:name=".cus_viewbook"
+            android:exported="false" />
+        <activity
+            android:name=".Custom"
+            android:exported="false" />
+        <activity
+            android:name=".userregisteration"
+            android:exported="false" />
+        <activity
+            android:name=".Addbook"
+            android:exported="false" />
+        <activity
+            android:name=".forgotpassword"
+            android:exported="false" />
+        <activity
+            android:name=".addpublisherbook"
+            android:exported="false" />
+        <activity
+            android:name=".register1"
+            android:exported="false" />
+        <activity
+            android:name=".NavcustomerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_navcustomer"
+            android:theme="@style/Theme.Book.NoActionBar" />
+        <activity
+            android:name=".navcustomer"
+            android:exported="false"
+            android:label="@string/title_activity_navcustomer"
+            android:theme="@style/Theme.Book.NoActionBar" />
+        <activity
+            android:name=".NavCustomerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_nav_customer"
+            android:theme="@style/Theme.Book.NoActionBar" />
+        <activity
+            android:name=".nav_customer"
+            android:exported="false"
+            android:label="@string/title_activity_nav_customer"
+            android:theme="@style/Theme.Book.NoActionBar" />
+        <activity
+            android:name=".nav_publisher"
+            android:exported="false"
+            android:label="@string/title_activity_nav_publisher"
+            android:theme="@style/Theme.Book.NoActionBar" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Registration"
+            android:exported="false" />
+        <activity
+            android:name=".Login"
+            android:exported="false" />
+        <activity
+            android:name=".ip"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
