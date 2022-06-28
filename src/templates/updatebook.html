@@ -8,34 +8,28 @@
                             <div class="card">
                                 <h5 class="card-header">Update book</h5>
                                 <div class="card-body">
-
-                                        <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Title</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
+<table cellpadding="20px">
+<tr>   <td>Title</td>
+                                            <td>
                                                 <input type="text" required  name="title" class="form-control" value="{{val[1]}}">
-                                            </div>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Author</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
+                                            </td>
+                                        <td>Author</td>
+                                            <td>
                                                 <input type="text" name="author" required class="form-control" value="{{val[2]}}">
-                                            </div>
-                                        </div>
-                                    <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Publisher</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
+                                            </td></tr>
+                                        <tr>
+                                    <td>Publisher</td>
+                                            <td>
                                                 <input type="text" required name="publisher" class="form-control" value="{{val[3]}}">
-                                            </div>
-                                        </div>
-                                    <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Publisher date</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
+                                            </td>
+                                      <td>Publisher date</td>
+                                            <td>
                                                 <input type="date" required name="publisher_d" class="form-control" value="{{val[4]}}">
-                                            </div>
-                                        </div>
-                                    <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Genre</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
+                                            </td>
+                                        </tr>
+    <tr>
+<td>Genre</td>
+                                            <td>
                                                 <select required name="Genre" class="form-control" >
 
                                                     {% for i in val1 %}
@@ -44,59 +38,55 @@
 
                                                 </select>
 
-                                            </div>
-                                        </div>
-                                    <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Page number</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
+                                            </td>
+
+<td>Page number</td>
+                                            <td>
                                                 <input type="text" required name="page" class="form-control" value="{{val[7]}}">
-                                            </div>
-                                        </div>
-                                    <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Description</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
-                                                <textarea required name="description" class="form-control">{{val[6]}}
+                                            </td>
+        </tr>
+    <tr>
+<td>Description</td>
+                                            <td colspan="3" align="left">
+                                                <textarea required name="description" class="form-control" style="width=400px;">{{val[6]}}
 
                                                 </textarea>
                                                 <!--<input type="text" required name="description" class="form-control" value="{{val[6]}}">-->
-                                            </div>
-                                        </div>
-                                    <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Price</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
+                                            </td>
+    </tr>
+    <tr>
+<td>Price</td>
+                                            <td>
                                                 <input type="text" required name="price" class="form-control" value="{{val[8]}}">
-                                            </div>
-                                        </div>
-                                    <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">ISBN</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
+                                            </td>
+<td>ISBN</td>
+                                            <td>
                                                 <input type="text" required name="isbn" class="form-control" value="{{val[12]}}">
-                                            </div>
-                                        </div>
-                                    <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Front cover page</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
+                                            </td></tr>
+    <tr>
+<td>Front cover page</td>
+                                            <td>
                                                 <input type="file"  name="pic1" id="pic1"  class="form-control" >{{val[9]}}
-                                            </div>
-                                        </div>
-                                    <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">Back cover page</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
-                                                <input type="file"  name="pic2" id="pic2"  class="form-control">{{val[10]}}
-                                            </div>
-                                        </div>
-                                    <div class="form-group row">
-                                            <label class="col-12 col-sm-3 col-form-label text-sm-right">URL</label>
-                                            <div class="col-12 col-sm-8 col-lg-6">
-                                                <input type="text" required name="url" class="form-control" value="{{val[11]}}">
-                                            </div>
-                                        </div>
-<div class="form-group row text-right">
-                                            <div class="col col-sm-10 col-lg-9 offset-sm-1 offset-lg-0">
-                                                <input type="submit" name="submit" value="Update" class="btn btn-space btn-primary">
+                                            </td>
 
-                                            </div>
-                                        </div>
+<td>Back cover page</td>
+                                            <td>
+                                                <input type="file"  name="pic2" id="pic2"  class="form-control">{{val[10]}}
+                                            </td>
+                                        </tr>
+    <tr>
+<td>URL</td>
+                                            <td colspan="3">
+                                                <input type="text" required name="url" class="form-control" value="{{val[11]}}" style="width=400px;">
+                                            </td>
+    </tr>
+
+<td colspan="4" align="center">
+                                                <input type="submit" name="submit" value="Update" class="btn btn-space btn-primary">
+</td>
+
+
+</table>
 
 
                                 </div>

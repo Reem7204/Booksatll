@@ -1,0 +1,46 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+
+<body>
+<form id="form1" name="form1" method="post" action="">
+
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="card">
+                                <h5 class="card-header">View book</h5>
+                                <div class="card-body">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Sl. No.</th>
+                                                <th scope="col">Title</th>
+
+                                                <th scope="col">Requested date</th>
+                                                <th scope="col">Request status</th>
+                                                <th scope="col">Delivery expected date</th>
+
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                       <tbody>
+                                       {% for i in val %}
+                                            <tr>
+
+                                                <td>{{loop.index}}</td>
+                                                <td><u><a href="/vbook2?id={{i[1]}}">{{i[7]}}</a></u></td>
+
+                                                <td>{{i[3]}}</td>
+                                                <td>&nbsp;{{i[4]}}</td>
+<td>&nbsp;{{i[5]}}</td>
+
+                                                <td><a href="/ordercancel?id={{i[0]}}" class = "btn btn-primary" style="border-radius: 8px;font-size: 14px;">Cancel</a></td>
+                                 </tr>
+                                        {% endfor %}
+
+                                       </tbody>
+</table>
+                                </div>
+                            </div>
+  </div>
+</form>
+</body>
+{% endblock %}

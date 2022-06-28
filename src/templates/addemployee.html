@@ -6,87 +6,82 @@
                                 <div class="card-body" align="center">
 <h2 align="center">Add employee</h2>
 <form  method="post" action="/addemployeecode">
+<table cellpadding="10px">
+<tr><td class="col-3 col-lg-2 col-form-label text-right">
 
-<div class="form-group row">
-                                            <label for="txt1" class="col-3 col-lg-2 col-form-label text-right">First Name</label>
-                                            <div class="col-9 col-lg-10">
-                                                <input id="txt1" type="text" name="fname" id="fname" required pattern="[A-Z a-z.]{3,25}" class="form-control" title="Only the combination of alphabets are allowed">
-                                            </div>
-                                        </div>
-    <div class="form-group row">
-                                            <label for="txt2" class="col-3 col-lg-2 col-form-label text-right">Last Name</label>
-                                            <div class="col-9 col-lg-10">
-                                                <input id="txt2" type="text" name="lname" id="lname" required pattern="[A-Z a-z.]{3,25}" class="form-control" title="Only the combination of alphabets are allowed">
-                                            </div>
-                                        </div>
+    First Name</td>
+                                          <td>  <div class="col-9 col-lg-10">
+                                                <input id="txt1" type="text" name="fname"  required pattern="[A-Z a-z.]{3,25}" class="form-control" title="Only the combination of alphabets are allowed" style="width: 250px;">
+                                          </div></td>
 
-    <div class="form-group row">
-        <label for="txt2" class="col-3 col-lg-2 col-form-label text-right">Gender</label>
+   <td class="col-3 col-lg-2 col-form-label text-right">
+       Last Name</td >
+                                           <td> <div class="col-9 col-lg-10">
+                                                <input id="txt2" type="text" name="lname"  required pattern="[A-Z a-z.]{3,25}" class="form-control" title="Only the combination of alphabets are allowed" style="width: 250px;">
+                                           </div></td></div></tr>
+
+   <tr><td class="col-3 col-lg-2 col-form-label text-right">Gender</td><td>
     <label class="custom-control custom-radio custom-control-inline">
                                                 <input type="radio" value="male" checked name="radio-inline"  class="custom-control-input"><span class="custom-control-label">Male</span>
                                             </label>
                                             <label class="custom-control custom-radio custom-control-inline">
                                                 <input type="radio" value="female" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Female</span>
-                                            </label>
-    </div>
+                                            </label></td>
+       <td class="col-3 col-lg-2 col-form-label text-right">
+       Date of birth</td>
+                                           <td> <div class="col-9 col-lg-10">
+                                                <input id="txt0" type="date" name="dob"  required  class="form-control" style="width: 250px;" max="{{val1}}">
+                                           </div></td></div></tr>
 
-    <div class="form-group row">
-                                            <label for="txt3" class="col-3 col-lg-2 col-form-label text-right">House name</label>
+    <tr><td class="col-3 col-lg-2 col-form-label text-right">House name</td>
+                                      <td>      <div class="col-9 col-lg-10">
+                                                <input id="txt3" type="text" name="hname" id="hname" required pattern="[A-Z a-z.]{3,25}" class="form-control" style="width: 250px;">
+                                      </div></td>
+
+    <td class="col-3 col-lg-2 col-form-label text-right"> Place</td><td>
                                             <div class="col-9 col-lg-10">
-                                                <input id="txt3" type="text" name="hname" id="hname" required pattern="[A-Z a-z.]{3,25}" class="form-control">
+                                                <input id="txt4" type="text" name="place" id="place" required pattern="[A-Z a-z.]{3,25}" class="form-control" style="width: 250px;">
                                             </div>
-                                        </div>
-    <div class="form-group row">
-                                            <label for="txt4" class="col-3 col-lg-2 col-form-label text-right"> Place</label>
+        </td></div></tr>
+    <tr>
+<td class="col-3 col-lg-2 col-form-label text-right"> Post</td>
+        <td>
                                             <div class="col-9 col-lg-10">
-                                                <input id="txt4" type="text" name="place" id="place" required pattern="[A-Z a-z.]{3,25}" class="form-control">
+                                                <input id="txt5" type="text" name="post" id="post" required pattern="[A-Z a-z.]{3,25}" class="form-control" style="width: 250px;">
                                             </div>
-                                        </div>
-<div class="form-group row">
-                                            <label for="txt5" class="col-3 col-lg-2 col-form-label text-right"> Post</label>
-                                            <div class="col-9 col-lg-10">
-                                                <input id="txt5" type="text" name="post" id="post" required pattern="[A-Z a-z.]{3,25}" class="form-control">
-                                            </div>
-                                        </div>
-<div class="form-group row">
-                                            <label for="txt6" class="col-3 col-lg-2 col-form-label text-right"> Pin</label>
+                                        </td>
+<td class="col-3 col-lg-2 col-form-label text-right"> Pin</td>
+    <td>
                                             <div class="col-9 col-lg-10">
 
-                                                <input id="txt6" type="text" name="pin" id="pin" required pattern="[0-9]{6}" title="Must be a number with 6 digits" class="form-control">
+                                                <input id="txt6" type="text" name="pin" id="pin" required pattern="[0-9]{6}" title="Must be a number with 6 digits" class="form-control" style="width: 250px;">
                                             </div>
-                                        </div>
-<div class="form-group row">
-                                            <label for="txt7" class="col-3 col-lg-2 col-form-label text-right"> Phone number</label>
+    </td></div></tr>
+<tr><td class="col-3 col-lg-2 col-form-label text-right"> Phone number</td><td>
                                             <div class="col-9 col-lg-10">
-                                                <input id="txt7" type="text" name="phoneno" id="phoneno" required pattern="[6789][0-9]{9}" title="Must be a number with 10 digits" class="form-control">
+                                                <input id="txt7" type="text" name="phoneno" id="phoneno" required pattern="[6789][0-9]{9}" title="Must be a number with 10 digits" class="form-control" style="width: 250px;">
                                             </div>
-                                        </div>
+                                        </td>
 
-<div class="form-group row">
-                                            <label for="txt8" class="col-3 col-lg-2 col-form-label text-right">Email id</label>
+
+<td class="col-3 col-lg-2 col-form-label text-right">Email id</td><td>
                                             <div class="col-9 col-lg-10">
-                                                <input id="txt8" type="text" name="emailid" id="emailid"  required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}" title="Must be a valid emilid" class="form-control">
+                                                <input id="txt8" type="text" name="emailid" id="emailid"  required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}" title="Must be a valid emilid" class="form-control" style="width: 250px;">
                                             </div>
-                                        </div>
-<div class="form-group row">
-                                            <label for="txt9" class="col-3 col-lg-2 col-form-label text-right">Username</label>
+                                        </td>
+</div></tr>
+<tr><td class="col-3 col-lg-2 col-form-label text-right">Joining date</td>
+    <td>
                                             <div class="col-9 col-lg-10">
-                                                <input id="txt9" type="text" name="uname" id="uname"  required pattern="[A-Z a-z.]{3,25}" class="form-control">
+                                                <input id="txt9" type="date" name="jdate" id="uname"  required max="{{val1}}" class="form-control" style="width: 250px;">
                                             </div>
-                                        </div>
+                                        </td>
 
-    <div class="form-group row">
-                                            <label for="txt10" class="col-3 col-lg-2 col-form-label text-right">Password</label>
+    <td class="col-3 col-lg-2 col-form-label text-right">Password</td><td>
                                             <div class="col-9 col-lg-10">
-                                                <input id="txt10" type="password" name="password" id="password"  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required class="form-control">
+                                                <input id="txt10" type="text" name="password" id="password"  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required class="form-control" style="width: 250px;">
                                             </div>
-                                        </div>
-        <div class="form-group row">
-                                            <label for="txt11" class="col-3 col-lg-2 col-form-label text-right">Confirm password</label>
-                                            <div class="col-9 col-lg-10">
-                                                <input id="txt11" type="password" name="password2" id="password2"  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required class="form-control">
-                                            </div>
-                                        </div>
+    </td></div></tr>
 
 
 
@@ -94,8 +89,9 @@
 
 
 
-<input type="submit" value="Add" name="submit" class="btn btn-space btn-primary">
-
+<tr align="center"><th colspan="4">
+    <input type="submit" value="Add" name="submit" class="btn btn-space btn-primary"></th></tr>
+</table>
 </form>
                                 </div>
                             </div>

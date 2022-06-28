@@ -2,8 +2,10 @@ from flask import *
 from src.dbconnection import *
 import os
 import datetime
+import requests
 from datetime import datetime,timedelta
 from werkzeug.utils import secure_filename
+from src.classifier import CLASSIFIER
 app = Flask(__name__)
 app.secret_key="sdsd"
 import functools
@@ -62,6 +64,40 @@ def employeehome():
     return render_template("employeehome.html")
 
 
+@app.route('/pbook')
+
+def pbook():
+    qry = "SELECT `p_book`.*,`publisher`.`name` FROM `p_book` JOIN `publisher` ON `publisher`.`lid`=`p_book`.`p_id`"
+    res = selectall(qry)
+    print(res)
+    return render_template("pbook.html",val=res)
+
+
+@app.route('/addcartbook')
+
+def addcartbook():
+    q = request.args.get('quantity')
+    d = datetime.now().strftime("%Y-%m-%d")
+    qry = "Insert into `paddcart` values (NULL,%s,%s,%s,'Requested','-')"
+    val = (session['pb_id'],q,d)
+    iud(qry,val)
+
+    return '''<script>alert('Requested successfully');window.location='/pbook';</script>'''
+
+
+
+@app.route('/pviewbook')
+
+def pviewbook():
+    id = request.args.get('id')
+    session['pb_id'] = id
+    qry = "SELECT * FROM `p_book` JOIN `publisher` ON `publisher`.`lid`=`p_book`.`p_id` where p_book.id=%s"
+    val = (id)
+    res = selectone(qry,val)
+    print(res)
+    return render_template("pviewbook.html",val=res)
+
+
 @app.route('/addsection')
 
 def addsection():
@@ -70,7 +106,10 @@ def addsection():
 @app.route('/addemployee')
 
 def addemployee():
-    return render_template("addemployee.html")
+    d = datetime.now()
+    d1 = d.date()
+    print(d1)
+    return render_template("addemployee.html",val1=d1)
 
 @app.route('/addpurchasebook')
 
@@ -236,22 +275,27 @@ def dpuinsert1():
             author = request.args.get('author')
             price = request.args.get('price')
 
-            qry2 = "INSERT INTO `d_publisher` (`name`,`address`,`phoneno`,`emailid`) VALUES (%s,%s,%s,%s)"
-            val2 = (name,address,phno,emailid)
-            id1 = iud(qry2, val2)
+            q = "select * from d_publisher where emailid=%s"
+            r = selectone(q,emailid)
+
+            if r is None:
+                qry2 = "INSERT INTO `d_publisher` (`name`,`address`,`phoneno`,`emailid`) VALUES (%s,%s,%s,%s)"
+                val2 = (name,address,phno,emailid)
+                id1 = iud(qry2, val2)
 
 
+                qry4 = "insert into `dpp_master` (`d_p`,`date`,`status`) values (%s,%s,'pending')"
+                val4 = (id1,d)
+                id = iud(qry4,val4)
+                session['d4_id'] = id
+                qry3 = "INSERT INTO `dpp_detail` (`id`,`du_id`,`isbn`,`s_id`,`title`,`author`,`price`,`quantity`) VALUES (NULL,%s,%s,%s,%s,%s,%s,%s)"
+                val3 = (id,isbn,genre,title,author,price,quantity)
+                session['d2_id'] = id
+                d2 = iud(qry3, val3)
 
-            qry4 = "insert into `dpp_master` (`d_p`,`date`,`status`) values (%s,%s,'pending')"
-            val4 = (id1,d)
-            id = iud(qry4,val4)
-            session['d4_id'] = id
-            qry3 = "INSERT INTO `dpp_detail` (`id`,`du_id`,`isbn`,`s_id`,`title`,`author`,`price`,`quantity`) VALUES (NULL,%s,%s,%s,%s,%s,%s,%s)"
-            val3 = (id,isbn,genre,title,author,price,quantity)
-            session['d2_id'] = id
-            d2 = iud(qry3, val3)
-
-            return '''<script>alert('Item entered');window.location='/dpublisherpurchase2';</script>'''
+                return '''<script>alert('Item entered');window.location='/dpublisherpurchase2';</script>'''
+            else:
+                return '''<script>alert('Publisher already present');window.location='/dpublisherpurchase';</script>'''
 
 
         elif res[1]=='pending':
@@ -518,15 +562,21 @@ def deletebook():
 
 def deleteemployee():
     eid=request.args.get('id')
+    d = datetime.now()
+    d1 = d.date()
+    qry0 = "select * from employee where l_id=%s and status='Resigned'"
+    res0 = selectone(qry0,eid)
+    if res0 is None:
+        qry="Update employee set r_date=%s ,status='Resigned'  where l_id=%s"
+        val=(d1,eid)
+        iud(qry,val)
 
-    qry="delete from employee where l_id=%s"
-    val=(eid)
-    iud(qry,val)
+        qry2 = "delete from login where l_id=%s"
+        iud(qry2,eid)
 
-    qry2 = "delete from login where l_id=%s"
-    iud(qry2,val)
-
-    return '''<script>alert('Deleted successfully');window.location='/viewemployee';</script>'''
+        return '''<script>alert('Resigned successfully');window.location='/viewemployee';</script>'''
+    else:
+        return '''<script>alert('Already resigned');window.location='/viewemployee';</script>'''
 
 
 @app.route('/updatesection')
@@ -680,10 +730,18 @@ def updateemployeecode():
 def updatesectioncode():
     genre = request.form['Genre']
     location = request.form['Location']
-    qry = "Update `section` set name=%s, location=%s where s_id=%s"
-    val = (genre,location,session['sid'])
-    iud(qry,val)
-    return '''<script>alert('Updated successfully');window.location='/viewsection';</script>'''
+    qry2 = "Select * from section where name=%s"
+    val = (genre)
+    res = selectone(qry2, val)
+
+    if res is None:
+        qry = "Update `section` set name=%s, location=%s where s_id=%s"
+        val = (genre,location,session['sid'])
+        iud(qry,val)
+        return '''<script>alert('Updated successfully');window.location='/viewsection';</script>'''
+    else:
+        return '''<script>alert('Genre already present');window.location='/viewsection';</script>'''
+
 
 @app.route('/viewemployee')
 
@@ -691,6 +749,68 @@ def viewemployee():
     qry="SELECT * FROM `employee`"
     res=selectall(qry)
     return  render_template("viewemployee.html",val=res)
+
+
+@app.route('/acceptorder')
+
+def acceptorder():
+    id = request.args.get('id')
+    q = "SELECT * FROM `userpd` WHERE pm_id=%s"
+    r = selectone(q,id)
+    print(r)
+    q1 = "SELECT * FROM `stockmanage` WHERE b_id=%s"
+    r1 = selectone(q1,r[2])
+    print(r1)
+    if ( r[3]<r1[2] ) :
+        s = r1[2]-r[3]
+        q3 = "update stockmanage set noofbook=%s where b_id=%s"
+        v3 = (s,r[2])
+        iud(q3,v3)
+        qry="Update userpm set status='Accepted' where pm_id=%s"
+        iud(qry,id)
+        return '''<script>alert('Accepted successfully');window.location='/userrequest';</script>'''
+    else:
+        return '''<script>alert('Out of stock');window.location='/userrequest';</script>'''
+
+@app.route('/rejectorder')
+
+def rejectorder():
+    id = request.args.get('id')
+    qry="Update userpm set status='Rejected' where pm_id=%s"
+    iud(qry,id)
+    return '''<script>alert('Rejected successfully');window.location='/userrequest';</script>'''
+
+
+@app.route('/ordercancel')
+
+def ordercancel():
+    id = request.args.get('id')
+    # q = "SELECT * FROM `paddcart` WHERE id=%s"
+    # r = selectone(q,id)
+
+    qry = "Update `paddcart` set status='Cancel' where id=%s"
+    iud(qry, id)
+    return '''<script>alert('Cancelled');window.location='/requeststatus';</script>'''
+
+
+
+@app.route('/userrequest')
+
+def userrequest():
+    qry="SELECT * FROM `book` JOIN `userpd` ON `userpd`.`b_id`=`book`.`b_id` JOIN `userpm` ON `userpd`.`pm_id`=`userpm`.`pm_id` JOIN `customer` ON `customer`.`l_id`=`userpm`.`cust_id` where userpm.status='Requested' ORDER BY `date` DESC"
+    res=selectall(qry)
+    return  render_template("userrequest.html",val=res)
+
+
+
+@app.route('/acceptedorders')
+
+def acceptedorders():
+    qry="SELECT * FROM `book` JOIN `userpd` ON `userpd`.`b_id`=`book`.`b_id` JOIN `userpm` ON `userpd`.`pm_id`=`userpm`.`pm_id` JOIN `customer` ON `customer`.`l_id`=`userpm`.`cust_id` where userpm.status='Accepted' ORDER BY `date` DESC"
+    res=selectall(qry)
+    return  render_template("Acceptedorder.html",val=res)
+
+
 
 @app.route('/mypublisher')
 
@@ -716,6 +836,13 @@ def a_viewbook1():
     return  render_template("a_viewbook1.html",val=res)
 
 
+@app.route('/requeststatus')
+def requeststatus():
+    qry="SELECT * FROM `paddcart` JOIN `p_book` ON `p_book`.`id`=`paddcart`.`bookid` ORDER BY `date` DESC"
+    res=selectall(qry)
+    return  render_template("requeststatus.html",val=res)
+
+
 @app.route('/a_viewbook2')
 
 def a_viewbook2():
@@ -725,6 +852,57 @@ def a_viewbook2():
 
     res = selectone2(qry)
     return  render_template("a_viewbook2.html",val=res)
+
+@app.route('/vbook2')
+
+def vbook2():
+    bid = request.args.get('id')
+
+    qry = " SELECT * FROM p_book JOIN `publisher` ON `p_book`.`p_id`=`publisher`.`lid` WHERE `p_book`.`id`=%s"
+
+    res = selectone(qry, bid)
+    return  render_template("rs.html",val=res)
+
+
+@app.route('/cust_detail')
+
+def cust_detail():
+    id = request.args.get('id')
+    qry = "Select * from customer where cust_id=%s"
+    res = selectone(qry,id)
+    return  render_template("cust_detail.html",val=res)
+
+@app.route('/s_pbook')
+
+def s_pbook():
+    s = request.args.get('S')
+    qry = "SELECT `p_book`.*,`publisher`.`name` FROM `p_book` JOIN `publisher` ON `publisher`.`lid`=`p_book`.`p_id` where title like '%"+str(s)+"%' or author like '%"+str(s)+"%'"
+    res = selectone(qry,id)
+    return  render_template("pbook.html",val=res)
+
+
+
+
+@app.route('/suggestion')
+
+def suggestion():
+
+    qry = "SELECT * from suggestion join customer where suggestion.cust_id=customer.l_id order by date desc"
+    res = selectall(qry)
+    return  render_template("suggestion.html",val=res)
+
+
+
+
+@app.route('/rs')
+
+def rs():
+    bid = request.args.get('id')
+
+    qry = " SELECT * FROM p_book JOIN `publisher` ON `p_book`.`p_id`=`publisher`.`lid` WHERE `p_book`.`id`=%s"
+
+    res = selectone(qry,bid)
+    return  render_template("rs.html",val=res)
 
 
 @app.route('/viewbook2')
@@ -743,6 +921,14 @@ def viewsection():
     qry="SELECT * FROM `section`"
     res=selectall(qry)
     return  render_template("viewsection.html",val=res)
+
+
+@app.route('/viewsection2')
+
+def viewsection2():
+    qry="SELECT * FROM `section`"
+    res=selectall(qry)
+    return  render_template("viewsection2.html",val=res)
 
 
 
@@ -813,11 +999,141 @@ def addbookcode():
 
         qry = "insert into book values(NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,'Present')"
         val = (title, author, publisher, publisher_d, genre, description, page, price, pic1name, pic2name, url, isbn)
-        iud(qry, val)
+        bid = iud(qry, val)
+
+        avgrating = []
+        # amazonlink = request.form['url']
+        # pname = bid
+        print(url, "ressssssssssssssssssssssssss")
+        # cmd.execute("INSERT INTO `product_url` VALUES(NULL,'" + pname + "','" + amazonlink + "','0')")
+        # pid = con.insert_id()
+        res1 = requests.get(url)
+        # print(res1)
+        # print(res1.text)
+        resn = []
+        row = []
+        # print(res1.text)
+        import re
+        clean = re.compile('<.*?>')
+        result = res1.text.split('<div class="t-ZTKy">')
+        print(len(result), "=============")
+        lis = []
+        cnt = 0
+        for i in range(1, len(result)):
+            try:
+                review = result[i].split('</div>')[0]
+                review = re.sub(clean, " ", review).replace("\n", " ")
+                print(review, "===========================================")
+                lis.append(review)
+                cnt = cnt + len(lis)
+                print(cnt, "cnttt*******************************************")
+                from nltk.sentiment.vader import SentimentIntensityAnalyzer
+                pstv = 0
+                ngtv = 0
+                ntl = 0
+                sid = SentimentIntensityAnalyzer()
+                ss = sid.polarity_scores(review)
+                a = float(ss['pos'])
+                b = float(ss['neg'])
+                c = float(ss['neu'])
+                rating = 2.5
+                if (ss['neu'] > ss['pos'] and ss['neu'] > ss['neg']):
+                    pass
+                if (ss['neg'] > ss['pos']):
+                    negva = 5 - (5 * ss['neg'])
+                    if negva > 2.5:
+                        negva = negva - 2.5
+                    rating = negva
+                else:
+                    negva = 5 * ss['pos']
+                    if negva < 2.5:
+                        negva = negva + 2.5
+                    rating = negva
+
+                avgrating.append(rating)
+
+
+                import re
+                cl = re.compile('\W')
+                review = re.sub(cl, " ", review)
+                # cmd.execute(
+                #     "INSERT INTO `review` VALUES(NULL,'" + str(pid) + "','" + str(review) + "','" + str(rating) + "')")
+                # con.commit()
+                qry2 = "Insert into crawlresult values (NULL,%s,%s,%s)"
+                val2 = (bid,review,rating)
+                iud(qry2,val2)
+            except Exception as e:
+                print("looooooooooooooooooooo++++++++++++++++++++++++", e)
+        for ii in range(2, 10):
+            res1 = requests.get(url + "&page=" + str(ii))
+            print(res1)
+            # print(res1.text)
+            resn = []
+            row = []
+            # print(res1.text)
+            import re
+            clean = re.compile('<.*?>')
+            result = res1.text.split('<div class="t-ZTKy">')
+            print(len(result), "=============")
+            lis = []
+            cl = CLASSIFIER()
+
+            for i in range(1, len(result)):
+                try:
+                    review = result[i].split('</div>')[0]
+                    review = re.sub(clean, " ", review).replace("\n", " ")
+                    print(review, "===========================================")
+                    lis.append(review)
+                    cnt = cnt + len(lis)
+                    print(cnt, "cnttt*******************************************")
+                    from nltk.sentiment.vader import SentimentIntensityAnalyzer
+                    pstv = 0
+                    ngtv = 0
+                    ntl = 0
+                    sid = SentimentIntensityAnalyzer()
+                    ss = sid.polarity_scores(review)
+                    a = float(ss['pos'])
+                    b = float(ss['neg'])
+                    c = float(ss['neu'])
+                    rating = 2.5
+                    if (ss['neu'] > ss['pos'] and ss['neu'] > ss['neg']):
+                        pass
+                    if (ss['neg'] > ss['pos']):
+                        negva = 5 - (5 * ss['neg'])
+                        if negva > 2.5:
+                            negva = negva - 2.5
+                        rating = negva
+                    else:
+                        negva = 5 * ss['pos']
+                        if negva < 2.5:
+                            negva = negva + 2.5
+                        rating = negva
+
+                    avgrating.append(rating)
+
+                    import re
+                    cl = re.compile('\W')
+                    review = re.sub(cl, " ", review)
+                    # cmd.execute(
+                    #     "INSERT INTO `review` VALUES(NULL,'" + str(pid) + "','" + str() + "','" + str(rating) + "')")
+                    # con.commit()
+                    qry3 = "Insert into crawlresult values (NULL,%s,%s,%s)"
+                    val3 = (bid, review, rating)
+                    iud(qry3, val3)
+
+                except Exception as e:
+                    print("looooooooooooooooooooo++++++++++++++++++++++++", e)
+
+
         return '''<script>alert('Added successfully');window.location='/addbook';</script>'''
 
     else:
         return '''<Script>alert("Isbn already present");window.location='/addbook';</script>'''
+
+
+
+
+
 
 
 @app.route('/addsectioncode',methods=['post'])
@@ -825,11 +1141,17 @@ def addbookcode():
 def addsectioncode():
     genre = request.form['Genre']
     location = request.form['Location']
+    qry2 = "Select * from section where name=%s"
+    val = (genre)
+    res = selectone(qry2,val)
 
-    qry = "insert into section values (NULL,%s,%s)"
-    val = (genre,location)
-    iud(qry,val)
-    return '''<script>alert('Added successfully');window.location='/addsection';</script>'''
+    if res is None:
+        qry = "insert into section values (NULL,%s,%s)"
+        val = (genre,location)
+        iud(qry,val)
+        return '''<script>alert('Added successfully');window.location='/addsection';</script>'''
+    else:
+        return '''<script>alert('Genre already present');window.location='/addsection';</script>'''
 
 
 
@@ -844,24 +1166,28 @@ def addemployeecode():
     place = request.form['place']
     post = request.form['post']
     pin = request.form['pin']
+    dob = request.form['dob']
     phoneno = request.form['phoneno']
     emailid = request.form['emailid']
-    uname = request.form['uname']
+    jdate = request.form['jdate']
     password = request.form['password']
-    cpswd=request.form['password2']
-    if cpswd==password:
 
+    qry = "select * from employee where emailid=%s"
+    res = selectone(qry,emailid)
+
+    if res is None:
 
         qry1 = "insert into login values (NULL,%s,%s,'Employee')"
-        val1 = (uname,password)
+        val1 = (emailid,password)
         lid = iud(qry1,val1)
 
-        qry2 = "insert into employee values (NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        val2 = (fname,lname,gender,hname,place,post,pin,phoneno,emailid,lid)
+        qry2 = "insert into employee values (NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NULL,'Present')"
+        val2 = (fname,lname,gender,hname,place,post,pin,phoneno,emailid,lid,dob,jdate)
         iud(qry2,val2)
         return '''<script>alert('Added successfully');window.location='/addemployee';</script>'''
     else:
-        return '''<script>alert('Confirm password does not match');window.location='/addemployee';</script>'''
+        return '''<script>alert('Employee already present');window.location='/addemployee';</script>'''
+
 
 @app.route('/logout')
 def logout():

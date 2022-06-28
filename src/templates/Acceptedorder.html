@@ -1,0 +1,51 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+
+<div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <div class="card" style="width:900px;">
+                                <h2 class="card-header">Accepted request</h2>
+                                <div class="card-body">
+<form action="" method="post" >
+
+ 
+<div align="center">
+
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Sl No.</th>
+        <th>Title</th>
+        <th>Author</th>
+      <th>Quantity</th>
+        <th>&nbsp;Destination</th>
+        <th>Requested date</th>
+
+      </tr>
+    </thead>
+    <tbody>
+
+    {% for i in val %}
+
+    <tr>
+      <td>{{loop.index}}</td>
+      <td><u><a href="/a_viewbook2?id={{i[0]}}">{{i[1]}}</a></u></td>
+        <td>&nbsp;{{i[2]}}</td>
+        <td>{{i[17]}}</td>
+      <td><u><a href="/cust_detail?id={{i[22]}}">{{i[25]}}</a></u></td>
+      <td>{{i[20]}}</td>
+
+
+
+
+      </tr>
+
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+</form>
+</div>
+                            </div>
+                        </div>
+
+{% endblock %}

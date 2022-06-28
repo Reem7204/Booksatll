@@ -1,0 +1,115 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+<head>
+    <style>
+tr:nth-child(even) {background: #fff}
+tr:nth-child(odd) {background: #FFF}
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  order:2;
+  background-color: DodgerBlue;
+}
+
+.flex-container > tr {
+  background-color: #f1f1f1;
+  width: 300px;
+  height:300px;
+  margin: 10px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 30px;
+}
+</style>
+
+
+
+
+<!--<style>-->
+<!--.flex-container {-->
+  <!--display: flex;-->
+  <!--background-color: #f1f1f1;-->
+<!--}-->
+
+<!--.flex-container > div {-->
+  <!--background-color: DodgerBlue;-->
+  <!--color: white;-->
+  <!--width: 300px;-->
+  <!--height: 300px;-->
+  <!--margin: 10px;-->
+  <!--text-align: center;-->
+  <!--line-height: 75px;-->
+  <!--font-size: 30px;-->
+<!--}-->
+<!--</style>-->
+</head>
+<body>
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="card">
+                                <h5 class="card-header">Details of the book</h5>
+                                <div class="card-body">
+                                   <form method="post" action="/s_pbook" align="center">
+                                       <input type="text" name="S" style="width:350px;">&nbsp;&nbsp;&nbsp;&nbsp;
+                                       <input type="submit" value="Search" name="Search" class="btn btn-primary btn-sm" style="height:28px;">
+                                   </form> <br><br>
+                                    <div class="flex-container">
+                                        <div class="flex-container">
+
+<table >
+<tr>
+    {% for i in range(0,val|length) %}
+{% if i!=0 %}
+                        {% if i%2==0 %}
+                           </tr> <tr>
+                        {% endif %}
+                    {% endif %}
+
+                                        <td>
+
+
+
+                                            <div class="container">
+  <div class="row">
+    <div class="col-sm-6">
+        <img src="static/bookpic/{{val[i][8]}}" style="width:200px;height:200px;">
+
+    </div>
+    <div class="col-sm-6">
+
+<div >
+  <h2>{{ val[i][1] }}</h2>
+
+  <p>By {{ val[i][2] }}</p>
+    <p>  {{ val[i][7] }}</p>
+    <a href="/pviewbook?id={{val[i][0]}}" class="btn btn-primary btn-sm">View more</a>
+</div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+                                        </td>
+
+
+
+    {% endfor %}
+</tr>
+     </table>
+</div>
+</div>
+                                </div>
+                            </div>
+</div>
+
+</body>
+{% endblock %}
