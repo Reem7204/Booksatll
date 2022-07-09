@@ -3,7 +3,7 @@
 
 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                             <div class="card" style="width:900px;">
-                                <h2 class="card-header">Accepted request</h2>
+                                <h2 class="card-header">View expense</h2>
                                 <div class="card-body">
 <form action="" method="post" >
 
@@ -14,13 +14,10 @@
     <thead>
     <tr>
       <th>Sl No.</th>
-        <th>Title</th>
-        <th>Author</th>
-      <th>Quantity</th>
-        <th>&nbsp;Destination</th>
-        <th>Requested date</th>
-
-      <th></th>
+        <th>Date</th>
+        <th>Description</th>
+        <th>&nbsp;Amount</th>
+        <th></th>
 
       </tr>
     </thead>
@@ -30,16 +27,10 @@
 
     <tr>
       <td>{{loop.index}}</td>
-      <td><u><a href="/a_viewbook2?id={{i[0]}}">{{i[1]}}</a></u></td>
+        <td>&nbsp;{{i[4]}}</td>
         <td>&nbsp;{{i[2]}}</td>
-        <td>{{i[17]}}</td>
-      <td><u><a href="/cust_detail?id={{i[19]}}">{{i[25]}}</a></u></td>
-      <td>{{i[31]}}</td>
-
-<td><a href="/delivered?id={{i[15]}}" class = "btn btn-primary">Delivered</a></td>
-
-
-
+        <td>&nbsp;{{i[3]}}</td>
+        <td><u><a href="/updateexpense?id={{i[0]}}" >Update</a></u></td>
       </tr>
 
     {% endfor %}

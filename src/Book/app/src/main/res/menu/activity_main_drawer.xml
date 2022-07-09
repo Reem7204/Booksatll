@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
@@ -12,9 +13,23 @@
             android:title="View book" />
         <item
             android:id="@+id/nav_vieworder"
-            android:title="View order" />
+            android:title="View request" />
+        <item
+            android:id="@+id/nav_vieworder2"
+            android:title="Accepted order" />
+        <item
+            android:id="@+id/nav_cancel"
+            app:actionViewClass="android.widget.TextView"
+            android:title="Cancel request" />
+        <item
+            android:id="@+id/nav_history"
+            android:title="Order history" />
         <item
             android:id="@+id/nav_viewprofile"
             android:title="View profile" />
+        <item
+            android:id="@+id/nav_logout2"
+            android:title="Logout" />
+
     </group>
 </menu>

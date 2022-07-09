@@ -1,6 +1,7 @@
 package com.example.book;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -102,34 +103,58 @@ public class nav_customer extends AppCompatActivity  implements NavigationView.O
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id= item.getItemId();
+        if(id==R.id.nav_bookrecommendation2)
+        {
+            Intent i=new Intent(getApplicationContext(),bookrecommendation.class);
+            startActivity(i);
+
+        }
         if(id==R.id.nav_bookrecommendation)
         {
-//            Intent i=new Intent(getApplicationContext(),Addbook.class);
-//            startActivity(i);
+            Intent i=new Intent(getApplicationContext(),cus_viewbook.class);
+            startActivity(i);
+
+        }
+        if(id==R.id.nav_mycart)
+        {
+            Intent i=new Intent(getApplicationContext(),Mycart.class);
+            startActivity(i);
 
         }
         if(id==R.id.nav_myorder)
         {
-//            Intent i=new Intent(getApplicationContext(),Addbook.class);
-//            startActivity(i);
+            Intent i=new Intent(getApplicationContext(),history2.class);
+            startActivity(i);
 
         }
         if(id==R.id.nav_booksuggestion)
         {
-//            Intent i=new Intent(getApplicationContext(),Addbook.class);
-//            startActivity(i);
+            Intent i=new Intent(getApplicationContext(),Suggestions.class);
+            startActivity(i);
 
         }
         if(id==R.id.nav_addcomplaint)
         {
-//            Intent i=new Intent(getApplicationContext(),Addbook.class);
-//            startActivity(i);
+            Intent i=new Intent(getApplicationContext(),addcomplaint.class);
+            startActivity(i);
+
+        }
+        if(id==R.id.nav_viewcomplaint)
+        {
+            Intent i=new Intent(getApplicationContext(),viewcomplaint.class);
+            startActivity(i);
 
         }
         if(id==R.id.nav_viewprofile)
         {
-//            Intent i=new Intent(getApplicationContext(),Addbook.class);
-//            startActivity(i);
+            Intent i=new Intent(getApplicationContext(),profilecustomer.class);
+            startActivity(i);
+
+        }
+        if(id==R.id.nav_logout1)
+        {
+            Intent i=new Intent(getApplicationContext(),Login.class);
+            startActivity(i);
 
         }
 

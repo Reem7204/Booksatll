@@ -92,6 +92,60 @@ def registrationcode2():
         return jsonify({'task': 'exist'})
 
 
+@app.route('/pcode',methods=['post'])
+def pcode():
+    print(request.form)
+    id = request.form['lid']
+    print(id)
+    fname = request.form['fname']
+    lname = request.form['lname']
+    place = request.form['place']
+    post = request.form['post']
+    pin = request.form['pin']
+
+    phoneno = request.form['phoneno']
+
+    password = request.form['pass']
+
+    qry1 = "update login set password=%s where l_id=%s"
+    val1 = (password,id)
+    iud(qry1,val1)
+
+    qry = "Update customer set `fname`=%s, `lname`=%s, `place`=%s, `post`=%s, `pin`=%s, `phoneno`=%s where `l_id`=%s"
+    val = (fname,lname,place,post,pin,phoneno,id)
+    iud(qry,val)
+
+    return jsonify({'task':'success'})
+
+
+
+@app.route('/pcode2',methods=['post'])
+def pcode2():
+    print(request.form)
+    id = request.form['lid']
+    print(id)
+    fname = request.form['fname']
+
+    place = request.form['place']
+    post = request.form['post']
+    pin = request.form['pin']
+
+    phoneno = request.form['phoneno']
+
+    password = request.form['pass']
+
+    qry1 = "update login set password=%s where l_id=%s"
+    val1 = (password,id)
+    iud(qry1,val1)
+
+    qry = "Update publisher set `name`=%s, `place`=%s, `post`=%s, `pin`=%s, `phoneno`=%s where `lid`=%s"
+    val = (fname,place,post,pin,phoneno,id)
+    iud(qry,val)
+
+    return jsonify({'task':'success'})
+
+
+
 @app.route('/addbook',methods=['post'])
 def addbook():
     title = request.form['title']
@@ -206,8 +260,8 @@ def cancelbookorder():
 def viewbooks():
     print(request.form)
     pub_id = request.form['pid']
-    qry = "select * from p_book WHERE `p_id`=%s"
-    res=androidselectall(qry,pub_id)
+    qry = "select *,DATE_FORMAT(p_book.publishdate,'%d-%m-%Y') AS dd from p_book WHERE `p_id`='"+str(pub_id)+"'"
+    res=androidselectallnew(qry)
     print(res)
     return jsonify(res)
 
@@ -215,8 +269,8 @@ def viewbooks():
 def viewrequest():
     print(request.form)
     pub_id = request.form['pid']
-    qry = "select * from `p_book` join `paddcart` On `p_book`.`id`=`paddcart`.`bookid` WHERE`p_book`.`p_id`=%s and `paddcart`.`status`='Requested'"
-    res=androidselectall(qry,pub_id)
+    qry = "select *,DATE_FORMAT(paddcart.date,'%d-%m-%Y') AS dd from `p_book` join `paddcart` On `p_book`.`id`=`paddcart`.`bookid` WHERE`p_book`.`p_id`='"+str(pub_id)+"' and `paddcart`.`status`='Requested'"
+    res=androidselectallnew(qry)
     print(res)
     return jsonify(res)
 
@@ -225,8 +279,8 @@ def viewrequest():
 def a_request():
     print(request.form)
     pub_id = request.form['pid']
-    qry = "select * from `p_book` join `paddcart` On `p_book`.`id`=`paddcart`.`bookid` WHERE`p_book`.`p_id`=%s and `paddcart`.`status`='Accepted'"
-    res=androidselectall(qry,pub_id)
+    qry = "SELECT *,DATE_FORMAT(paddcart.date,'%d-%m-%Y') AS d1,DATE_FORMAT(paddcart.d_date,'%d-%m-%Y') AS d2 FROM `p_book` JOIN `paddcart` ON `p_book`.`id`=`paddcart`.`bookid` WHERE`p_book`.`p_id`='"+str(pub_id)+"' AND `paddcart`.`status`='Accepted'"
+    res=androidselectallnew(qry)
     print(res)
     return jsonify(res)
 
@@ -252,7 +306,7 @@ def forgotpassword1():
                 gmail.login('amanbookstall3@gmail.com', 'rekluwmicbnbmjqt')
             except Exception as e:
                 print("Couldn't setup email!!" + str(e))
-            msg = MIMEText("Your new password id : " + str(s[0]))
+            msg = MIMEText("Your password is : " + str(s[0]))
             print(msg)
             msg['Subject'] = 'Your Password'
             msg['To'] = email
@@ -281,21 +335,32 @@ def custviewbook():
     if title =="":
         print("nnnn")
         if sid=='0':
-            qry = "SELECT *,ROUND(AVG(`crawlresult`.`rating`),1) AS r FROM book JOIN section JOIN `crawlresult` ON section.s_id=book.s_id AND `book`.`b_id`=`crawlresult`.`product_id` GROUP BY `product_id`"
+            qry = "SELECT *,ROUND(AVG(`crawlresult`.`rating`),1) AS r,DATE_FORMAT(book.p_year,'%d-%m-%Y') AS dd FROM book JOIN section JOIN `crawlresult` ON section.s_id=book.s_id AND `book`.`b_id`=`crawlresult`.`product_id` GROUP BY `product_id`"
             res = androidselectallnew(qry)
             print(res)
             return jsonify(res)
         else:
 
-            qry = "select * from book join section on section.s_id=book.s_id where book.s_id=%s"
+            qry = "SELECT *,ROUND(AVG(`crawlresult`.`rating`),1) AS r,DATE_FORMAT(book.p_year,'%d-%m-%Y') AS dd FROM book JOIN section JOIN `crawlresult` ON section.s_id=book.s_id AND `book`.`b_id`=`crawlresult`.`product_id` where book.s_id=%s GROUP BY `product_id`"
             res =androidselectall(qry,sid)
             print("hf",res)
             return jsonify(res)
     else:
         print("UUUU")
-        qry="SELECT * FROM `book` join section on section.s_id=book.s_id WHERE book.title like '%"+str(title)+"%'"
+        qry="SELECT *,ROUND(AVG(`crawlresult`.`rating`),1) AS r,DATE_FORMAT(book.p_year,'%d-%m-%Y') AS dd FROM book JOIN section JOIN `crawlresult` ON section.s_id=book.s_id AND `book`.`b_id`=`crawlresult`.`product_id` WHERE book.title like '%"+str(title)+"%' GROUP BY `product_id`"
         res = androidselectallnew(qry)
         return jsonify(res)
+
+
+@app.route('/pubviewbook',methods=['post'])
+def pubviewbook():
+    print(request.form)
+    title=request.form['title']
+    pid=request.form['pid']
+    q = "select *, DATE_FORMAT(p_book.publishdate, '%d-%m-%Y') AS dd from p_book where `p_id` = '"+str(pid)+"' and title like '%"+str(title)+"%'"
+    res = androidselectallnew(q)
+    return jsonify(res)
+
 
 
 
@@ -305,6 +370,7 @@ def View_Books_rec():
     id=request.form['lid']
     qry=" SELECT `book`.`b_id`,`description` FROM `book` JOIN `userpd` ON `userpd`.`b_id`=`book`.`b_id` LEFT JOIN `userpm` ON `userpm`.`pm_id`=`userpd`.`pm_id` WHERE `userpm`.`cust_id`=%s"
     res=selectone(qry,id)
+    print(res)
     if res is None:
         return jsonify([])
     else:
@@ -317,8 +383,10 @@ def View_Books_rec():
         return jsonify(res)
 
 
+
 @app.route('/acceptrequest',methods=['post'])
 def acceptrequest():
+
     print(request.form)
     id = request.form['id']
     d = request.form['d']
@@ -326,6 +394,8 @@ def acceptrequest():
     val = (d,id)
     iud(qry,val)
     return jsonify({'task': 'success'})
+
+
 
 @app.route('/rejectrequest',methods=['post'])
 def rejectrequest():
@@ -335,6 +405,17 @@ def rejectrequest():
     val = (id)
     iud(qry,val)
     return jsonify({'task': 'success'})
+
+
+@app.route('/cancelbooks',methods=['post'])
+def cancelbooks():
+    print(request.form)
+    id = request.form['idd']
+    qry = "update paddcart set `status`='Cancelled' where id=%s"
+    val = (id)
+    iud(qry,val)
+    return jsonify({'task': 'success'})
+
 
 
 @app.route('/service',methods=['post'])
@@ -349,6 +430,18 @@ def service():
     else:
         return jsonify({'task1': 'yes'})
 
+
+@app.route('/cancelservice',methods=['post'])
+def cancelservice():
+    print(request.form)
+    id = request.form['pid']
+    qry = "SELECT `p_book`.`title`,`paddcart`.`qty`,`paddcart`.`date` FROM `paddcart` JOIN `p_book` ON `p_book`.`id`=`paddcart`.`bookid` WHERE `paddcart`.`status`='Cancel' AND `p_book`.`p_id`=%s"
+    val = (id)
+    res=selectone(qry,val)
+    if res is None:
+        return jsonify({'task1': 'na'})
+    else:
+        return jsonify({'task1': 'yes'})
 
 @app.route('/addreview',methods=['post'])
 def addreview():
@@ -378,6 +471,18 @@ def addsuggestion():
     return jsonify({'task': 'success'})
 
 
+@app.route('/addcomplaint',methods=['post'])
+def addcomplaint():
+    s = request.form['s']
+    id = request.form['pid']
+    print(id)
+    d = datetime.now().strftime("%Y-%m-%d")
+    qry = "insert into complaint values(NULL,%s,%s,'-',%s)"
+    val = (id,s,d)
+    iud(qry,val)
+    return jsonify({'task': 'success'})
+
+
 
 @app.route('/addtocart',methods=['post'])
 def addtocart():
@@ -401,8 +506,8 @@ def addtocart():
 def viewreview():
     id = request.form['bid']
     print(id)
-    qry = "SELECT * FROM review LEFT JOIN customer ON review.cust_id=customer.l_id where review.bid=%s ORDER BY r_id DESC "
-    res = androidselectall(qry,id)
+    qry = "SELECT *,DATE_FORMAT(review.date,'%d-%m-%Y') as dd FROM review LEFT JOIN customer ON review.cust_id=customer.l_id where review.bid='"+str(id)+"' ORDER BY r_id DESC "
+    res = androidselectallnew(qry)
     print(res)
     return jsonify(res)
 
@@ -411,14 +516,80 @@ def viewreview():
 def viewmycart():
     id = request.form['pid']
     print(id)
-    qry = "SELECT * FROM `userpm` JOIN `userpd` JOIN book ON `userpm`.`pm_id`=`userpd`.`pm_id` AND userpd.b_id=book.b_id WHERE `userpm`.`cust_id`=%s AND `userpm`.`status`='Requested' ORDER BY `date` DESC"
-    res = androidselectall(qry,id)
+    qry = "SELECT *,userpm.status AS s,DATE_FORMAT(userpm.date,'%d-%m-%Y') AS dd FROM `userpm` JOIN `userpd` JOIN book ON `userpm`.`pm_id`=`userpd`.`pm_id` AND userpd.b_id=book.b_id WHERE `userpm`.`cust_id`='"+str(id)+"' AND `userpm`.`status` IN ('Requested','Accepted') ORDER BY `date` DESC"
+    res = androidselectallnew(qry)
+    print(res)
+    return jsonify(res)
+
+
+@app.route('/history2',methods=['post'])
+def history2():
+    id = request.form['pid']
+    print(id)
+    qry = "SELECT *,userpm.status AS s,DATE_FORMAT(userpm.date,'%d-%m-%Y') AS dd FROM `userpm` JOIN `userpd` JOIN book ON `userpm`.`pm_id`=`userpd`.`pm_id` AND userpd.b_id=book.b_id WHERE `userpm`.`cust_id`='"+str(id)+"' ORDER BY `date` DESC"
+    res = androidselectallnew(qry)
     print(res)
     return jsonify(res)
 
 
 
+@app.route('/updatep1',methods=['post'])
+def updatep1():
+    lid = request.form['pid']
+    print(lid)
+    qry = "SELECT * FROM customer JOIN `login` ON `login`.`l_id`=`customer`.`l_id` WHERE `customer`.`l_id`=%s"
+    res = androidselectall(qry,lid)
+    print(res)
+    return jsonify(res)
 
+
+@app.route('/updatep2',methods=['post'])
+def updatep2():
+    lid = request.form['pid']
+    print(lid)
+    qry = "SELECT * FROM `publisher` JOIN `login` ON `publisher`.`lid`=`login`.`l_id` WHERE `publisher`.`lid`=%s"
+    res = androidselectall(qry,lid)
+    print(res)
+    return jsonify(res)
+
+
+@app.route('/complaint2',methods=['post'])
+def complaint2():
+    id = request.form['pid']
+    print(id)
+    qry = "select *,DATE_FORMAT(`date`,'%d-%m-%Y') AS dd from complaint where cust_id='"+str(id)+"'"
+    res = androidselectallnew(qry)
+    print(res)
+    return jsonify(res)
+
+
+@app.route('/history',methods=['post'])
+def history():
+    id = request.form['pid']
+    print(id)
+    qry = "SELECT *,DATE_FORMAT(p_book.publishdate,'%d-%m-%Y') AS pd,DATE_FORMAT(paddcart.date,'%d-%m-%Y') AS d1,DATE_FORMAT(paddcart.d_date,'%d-%m-%Y') AS d2 FROM `paddcart` JOIN `p_book` ON `p_book`.`id`=`paddcart`.`bookid` WHERE p_id='"+str(id)+"'"
+    res = androidselectallnew(qry)
+    print("+++++++++++++",res)
+    return jsonify(res)
+
+
+@app.route('/cancelrequest',methods=['post'])
+def cancelrequest():
+    id = request.form['pid']
+    print(id)
+    qry = "SELECT *,`paddcart`.`id` AS idd,DATE_FORMAT(p_book.publishdate,'%d-%m-%Y') AS pd,DATE_FORMAT(paddcart.date,'%d-%m-%Y') AS d1,DATE_FORMAT(paddcart.d_date,'%d-%m-%Y') AS d2 FROM `paddcart` JOIN `p_book` ON `p_book`.`id`=`paddcart`.`bookid` WHERE p_id='"+str(id)+"' AND `status`='Cancel'"
+    res = androidselectallnew(qry)
+    print("+++++++++++++",res)
+    return jsonify(res)
+
+@app.route('/countcancel',methods=['post'])
+def countcancel():
+    id = request.form['lid']
+    print(id)
+    qry = "SELECT COUNT(`paddcart`.`id`) AS c FROM `paddcart` JOIN `p_book` ON `p_book`.`id`=`paddcart`.`bookid` WHERE p_id=%s AND `status`='Cancel'"
+    res = selectone(qry,id)
+    print("+++++++++++++",res)
+    return jsonify({'task': res[0]})
 
 
 

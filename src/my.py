@@ -3,9 +3,12 @@ from src.dbconnection import *
 import os
 import datetime
 import requests
+import smtplib
 from datetime import datetime,timedelta
 from werkzeug.utils import secure_filename
 from src.classifier import CLASSIFIER
+from email.mime.text import MIMEText
+from flask_mail import Mail
 app = Flask(__name__)
 app.secret_key="sdsd"
 import functools
@@ -13,7 +16,7 @@ import functools
 def login_required(func):
     @functools.wraps(func)
     def secure_function():
-        if "l_id" not in session:
+        if "lid" not in session:
             return render_template('login1.html')
         return func()
     return secure_function
@@ -29,6 +32,79 @@ def login():
     return render_template("login1.html")
 
 
+@app.route('/report')
+@login_required
+def report():
+    q12 = "SELECT SUM(noofbook) FROM stockmanage"
+    r12 = selectone2(q12)
+    return render_template("report.html",val1="",val2="",val3="",val4="",val8="",val9="",val10="",val11="",val12=r12)
+
+
+@app.route('/report2',methods=['post'])
+@login_required
+def report2():
+    d1 = request.form['d1']
+    d2 = request.form['d2']
+    if d1<d2:
+            q1 = "SELECT CAST(SUM(`book`.`price`*`userpd`.`quantity`) AS DECIMAL(10,2)) FROM `userpm` JOIN `userpd` JOIN `book` ON `book`.`b_id`=`userpd`.`b_id` AND `userpd`.`pm_id`=`userpm`.`pm_id` WHERE `userpm`.`date` BETWEEN %s AND %s"
+            v1 = (d1,d2)
+            r1 = selectone(q1,v1)
+            if r1[0] is None:
+                r_1=0
+            else:
+                r_1=r1[0]
+            q2 = "SELECT CAST(SUM(amount) AS DECIMAL(10,2)) FROM expense WHERE DATE BETWEEN %s AND %s"
+            r2 = selectone(q2,v1)
+            q5 = "SELECT CAST(SUM(`p_book`.`price`*`paddcart`.`qty`) AS DECIMAL(10,2)) FROM `paddcart` JOIN `p_book` ON `p_book`.`id`=`paddcart`.`bookid` WHERE DATE BETWEEN %s AND %s AND `paddcart`.`status`='Accepted'"
+            r5 = selectone(q5,v1)
+            q8 = "SELECT CAST(SUM(`dpp_detail`.`price`*`dpp_detail`.`quantity`) AS DECIMAL(10,2)) FROM `dpp_master` JOIN `dpp_detail` ON `dpp_detail`.`du_id`=`dpp_master`.`du_id` WHERE `dpp_master`.`date` BETWEEN %s AND %s"
+            r8 = selectone(q8,v1)
+            print(r2)
+            print(r5)
+            print(r8)
+            try:
+                if r2[0] is None or r5[0] is None or r8[0] is None:
+                    r=0
+                    r3=0
+                else:
+                    r = r2[0] + r5[0] +r8[0]
+                    print(r)
+                    r3 = r1[0] - r
+            except:
+                r = 0
+                r3 = 0
+
+            q4 = "SELECT SUM(quantity) FROM stock WHERE DATE BETWEEN %s AND %s"
+            r4 = selectone(q4,v1)
+            if r4[0] is None:
+                r_4=0
+            else:
+                r_4=r4[0]
+            q6 = "SELECT SUM(quantity) FROM `userpm` JOIN `userpd` ON `userpm`.`pm_id`=`userpd`.`pm_id` WHERE DATE BETWEEN %s AND %s AND `status` IN ('Accepted','Delivered')"
+            r6 = selectone(q6,v1)
+            q7 = "SELECT SUM(quantity) FROM `dup_master` JOIN `dup_detail` ON `dup_master`.`dp_id`=`dup_detail`.`dp_id` WHERE DATE BETWEEN %s AND %s"
+            r7 = selectone(q7,v1)
+            try:
+                if r6[0] is None or r7[0] is None:
+                    r8=0
+                else:
+                    r8 = r6[0]+r7[0]
+            except:
+               r8=0
+            q9 = "SELECT COUNT(pm_id) FROM `userpm` WHERE DATE BETWEEN %s AND %s"
+            r9 = selectone(q9,v1)
+            q10 = "SELECT COUNT(pm_id) FROM `userpm` WHERE `status` in ('Accepted','Cancelled') and DATE BETWEEN %s AND %s"
+            r10 = selectone(q10,v1)
+            q11 = "SELECT COUNT(pm_id) FROM `userpm` WHERE `status`='Cancelled' and DATE BETWEEN %s AND %s"
+            r11 = selectone(q11,v1)
+            q12 = "SELECT SUM(noofbook) FROM stockmanage"
+            r12 = selectone2(q12)
+            print(r12)
+            return render_template("report.html",val1=r_1,val2=r,val3=r3,val4=r_4,val8=r8,val9=r9,val10=r10,val11=r11,val12=r12)
+    else:
+        return '''<script>alert('Invalid date');window.location='/report';</script>'''
+
+
 
 @app.route('/logincode',methods=['post'])
 def logincode():
@@ -40,8 +116,10 @@ def logincode():
     if s is None:
         return '''<script>alert('Invalid username and password');window.location='/login';</script>'''
     elif s[3]=="Admin":
+        session['lid']=s[0]
         return redirect('/adminhome')
     elif s[3]=="Employee":
+        session['lid']=s[0]
         return redirect('/employeehome')
     else:
         return '''<script>alert('Invalid username and password');window.location='/login';</script>'''
@@ -49,32 +127,36 @@ def logincode():
 
 
 @app.route('/blankpage')
-
+@login_required
 def blankpage():
+
     return render_template("blankpage.html")
 
 @app.route('/adminhome')
-
+@login_required
 def adminhome():
+    qry = "SELECT count(*) FROM `book` JOIN `userpd` ON `userpd`.`b_id`=`book`.`b_id` JOIN `userpm` ON `userpd`.`pm_id`=`userpm`.`pm_id` JOIN `customer` ON `customer`.`l_id`=`userpm`.`cust_id` where userpm.status='Requested' ORDER BY `date` DESC"
+    res = selectone2(qry)
+    order_req=str(res[0])
+    session['req']=order_req
+    print(order_req,"=================================================")
+    qry2 = "SELECT count(*) FROM `book` JOIN `userpd` ON `userpd`.`b_id`=`book`.`b_id` JOIN `userpm` ON `userpd`.`pm_id`=`userpm`.`pm_id` JOIN `customer` ON `customer`.`l_id`=`userpm`.`cust_id` where userpm.status='Cancel' ORDER BY `date` DESC"
+    res2 = selectone2(qry2)
+    cl_req = str(res2[0])
+    session['req2'] = cl_req
     return render_template("adminhome.html")
 
 @app.route('/employeehome')
-
+@login_required
 def employeehome():
     return render_template("employeehome.html")
 
 
-@app.route('/pbook')
 
-def pbook():
-    qry = "SELECT `p_book`.*,`publisher`.`name` FROM `p_book` JOIN `publisher` ON `publisher`.`lid`=`p_book`.`p_id`"
-    res = selectall(qry)
-    print(res)
-    return render_template("pbook.html",val=res)
 
 
 @app.route('/addcartbook')
-
+@login_required
 def addcartbook():
     q = request.args.get('quantity')
     d = datetime.now().strftime("%Y-%m-%d")
@@ -87,7 +169,7 @@ def addcartbook():
 
 
 @app.route('/pviewbook')
-
+@login_required
 def pviewbook():
     id = request.args.get('id')
     session['pb_id'] = id
@@ -98,13 +180,26 @@ def pviewbook():
     return render_template("pviewbook.html",val=res)
 
 
-@app.route('/addsection')
+@app.route('/addexpense')
+@login_required
+def addexpense():
+    d = datetime.now()
+    d1 = d.date()
+    print(d1)
 
+    return render_template("addexpense.html", val1=d1)
+
+
+@app.route('/addsection')
+@login_required
 def addsection():
     return render_template("addsection.html")
 
-@app.route('/addemployee')
 
+
+
+@app.route('/addemployee')
+@login_required
 def addemployee():
     d = datetime.now()
     d1 = d.date()
@@ -112,7 +207,7 @@ def addemployee():
     return render_template("addemployee.html",val1=d1)
 
 @app.route('/addpurchasebook')
-
+@login_required
 def addpurchasebook():
     id = request.args.get('id')
     d = datetime.now()
@@ -128,7 +223,7 @@ def addpurchasebook():
 
 
 @app.route('/dpublisherpurchase')
-
+@login_required
 def dpublisherpurchase():
     qry = "select * from section"
     res = selectall(qry)
@@ -140,7 +235,7 @@ def dpublisherpurchase():
 
 
 @app.route('/dpublisherpurchase3', methods=["POST", "GET"])
-
+@login_required
 def dpublisherpurchase3():
 
     if request.method == "GET":
@@ -161,7 +256,7 @@ def dpublisherpurchase3():
 
 
 @app.route('/dpuinsert')
-
+@login_required
 def dpuinsert():
     b = request.args.get('Submit')
     if b == "Add book":
@@ -253,7 +348,7 @@ def dpuinsert():
 
 
 @app.route('/dpuinsert1')
-
+@login_required
 def dpuinsert1():
     b = request.args.get('Submit')
     print(b)
@@ -339,7 +434,7 @@ def dpuinsert1():
         return '''<script>alert('Saved successfully');window.location='/dpublisherpurchase';</script>'''
 
 @app.route('/edititem2')
-
+@login_required
 def edititem2():
     id = request.args.get('id')
     session['editppid']=id
@@ -351,7 +446,7 @@ def edititem2():
     return render_template("editpp.html",val=res,val1=res1,id=res[0][3])
 
 @app.route('/edititem3')
-
+@login_required
 def edititem3():
     i = request.args.get('isbn')
     g = request.args.get('genre')
@@ -366,7 +461,7 @@ def edititem3():
     return '''<script>alert('Item updated successfully');window.location='/dpublisherpurchase2';</script>'''
 
 @app.route('/edititem4')
-
+@login_required
 def edititem4():
     id = request.args.get('id')
     session['edititem']=id
@@ -377,7 +472,7 @@ def edititem4():
     return render_template("qty2.html",val=res)
 
 @app.route('/edititem5')
-
+@login_required
 def edititem5():
 
     q = request.args.get('quantity')
@@ -388,7 +483,7 @@ def edititem5():
     return '''<script>alert('Item updated successfully');window.location='/duserpurchase2';</script>'''
 
 @app.route('/bookdetails',methods=['get','post'])
-
+@login_required
 def bookdetails():
     title = request.form['brand']
     print(title)
@@ -414,7 +509,7 @@ def bookdetails():
 
 
 @app.route('/duserpurchase', methods=["POST", "GET"])
-
+@login_required
 def duserpurchase():
 
     if request.method == "GET":
@@ -426,6 +521,7 @@ def duserpurchase():
 
 
 @app.route('/duserpurchase2', methods=["POST", "GET"])
+@login_required
 def duserpurchase2():
 
     if request.method == "GET":
@@ -444,7 +540,7 @@ def duserpurchase2():
 
 
 @app.route('/dpublisherpurchase2', methods=["POST", "GET"])
-
+@login_required
 def dpublisherpurchase2():
 
     if request.method == "GET":
@@ -465,7 +561,7 @@ def dpublisherpurchase2():
 
 
 @app.route('/addbook')
-
+@login_required
 def addbook():
     d = datetime.now()
     d1 = d.date()
@@ -476,7 +572,7 @@ def addbook():
     return render_template("addbook.html",val1=d1,val=res)
 
 @app.route('/addstock')
-
+@login_required
 def addstock():
     qry = "select * from section"
     res = selectall(qry)
@@ -486,7 +582,7 @@ def addstock():
 
 
 @app.route('/gcode',methods=['get','post'])
-
+@login_required
 def gcode():
     genre = request.form['brand']
 
@@ -506,7 +602,7 @@ def gcode():
 
 
 @app.route('/deleteitem')
-
+@login_required
 def deleteitem():
     did=request.args.get('id')
     print(did)
@@ -525,7 +621,7 @@ def deleteitem():
 
 
 @app.route('/deleteitem2')
-
+@login_required
 def deleteitem2():
     did=request.args.get('id')
 
@@ -537,7 +633,7 @@ def deleteitem2():
 
 
 @app.route('/deletesection')
-
+@login_required
 def deletesection():
     sid=request.args.get('id')
 
@@ -547,8 +643,9 @@ def deletesection():
 
     return '''<script>alert('Deleted successfully');window.location='/viewsection';</script>'''
 
-@app.route('/deletebook')
 
+@app.route('/deletebook')
+@login_required
 def deletebook():
     bid=request.args.get('id')
 
@@ -559,7 +656,7 @@ def deletebook():
 
 
 @app.route('/deleteemployee')
-
+@login_required
 def deleteemployee():
     eid=request.args.get('id')
     d = datetime.now()
@@ -580,7 +677,7 @@ def deleteemployee():
 
 
 @app.route('/updatesection')
-
+@login_required
 def updatesection():
     sid=request.args.get('id')
     session['sid']=sid
@@ -590,8 +687,32 @@ def updatesection():
 
     return render_template("updatesection.html",val=res)
 
-@app.route('/updateemployee')
 
+@app.route('/replycomplaint')
+@login_required
+def replycomplaint():
+    sid=request.args.get('id')
+    session['rid']=sid
+    qry="select * from complaint where id=%s"
+    val=(sid)
+    res=selectone(qry,val)
+    return render_template("replycomplaint.html", val=res)
+
+
+@app.route('/updateexpense')
+@login_required
+def updateexpense():
+    sid=request.args.get('id')
+    session['sid2']=sid
+    qry="select * from expense where id=%s"
+    val=(sid)
+    res=selectone(qry,val)
+
+    return render_template("updateexpense.html",val=res)
+
+
+@app.route('/updateemployee')
+@login_required
 def updateemployee():
     eid=request.args.get('id')
     session['eid']=eid
@@ -603,7 +724,7 @@ def updateemployee():
 
 
 @app.route('/viewbill',methods=['post','get'])
-
+@login_required
 def viewbill():
     qry0 = "SELECT * FROM book JOIN `dup_master` JOIN `dup_detail` ON `book`.`b_id`=`dup_detail`.`bid` AND `dup_master`.`dp_id`=`dup_detail`.`dp_id` WHERE `dup_master`.dp_id=%s"
     val0 = (session['d1_id'])
@@ -617,7 +738,7 @@ def viewbill():
 
 
 @app.route('/updatebook')
-
+@login_required
 def updatebook():
 
     qry = "select * from book where b_id=%s"
@@ -630,8 +751,33 @@ def updatebook():
     return render_template("updatebook.html", val=res,val1=res1,id=res[5])
 
 
-@app.route('/editbook')
 
+@app.route('/comment')
+@login_required
+def comment():
+    bid = request.args.get('id')
+
+    qry = "SELECT * FROM `review` JOIN `customer` ON `review`.`cust_id`=`customer`.`l_id` WHERE `review`.`bid`=%s"
+    val = (bid)
+    res = selectall2(qry,val)
+    print(res)
+
+    return render_template("comment.html", val=res)
+
+@app.route('/comment2')
+@login_required
+def comment2():
+    bid = request.args.get('id')
+
+    qry = "SELECT * FROM `review` JOIN `customer` ON `review`.`cust_id`=`customer`.`l_id` WHERE `review`.`bid`=%s"
+    val = (bid)
+    res = selectall2(qry,val)
+    print(res)
+
+    return render_template("comment2.html", val=res)
+
+@app.route('/editbook')
+@login_required
 def editbook():
     bid = request.args.get('id')
     session['b']=bid
@@ -644,7 +790,7 @@ def editbook():
 
 
 @app.route('/editbook1')
-
+@login_required
 def editbook1():
 
     qty = request.args.get('quantity')
@@ -656,7 +802,7 @@ def editbook1():
 
 
 @app.route('/updatebookcode',methods=['post'])
-
+@login_required
 def updatebookcode():
     try:
         title = request.form['title']
@@ -705,7 +851,7 @@ def updatebookcode():
 
 
 @app.route('/updateemployeecode',methods=['post'])
-
+@login_required
 def updateemployeecode():
     fname=request.form['fname']
     lname = request.form['lname']
@@ -725,8 +871,19 @@ def updateemployeecode():
 
 
 
-@app.route('/updatesectioncode',methods=['post'])
+@app.route('/addcomplaint',methods=['post'])
+@login_required
+def addcomplaint():
+    r=request.form['reply']
+    qry2 = "UPDATE `complaint` SET `reply`=%s where id=%s"
+    val2 = (r,session['rid'])
+    iud(qry2,val2)
+    return '''<script>alert('Reply send');window.location='/complaint';</script>'''
 
+
+
+@app.route('/updatesectioncode',methods=['post'])
+@login_required
 def updatesectioncode():
     genre = request.form['Genre']
     location = request.form['Location']
@@ -743,8 +900,23 @@ def updatesectioncode():
         return '''<script>alert('Genre already present');window.location='/viewsection';</script>'''
 
 
-@app.route('/viewemployee')
 
+@app.route('/updateexpensecode',methods=['post'])
+@login_required
+def updateexpensecode():
+    date = request.form['date']
+    amount = request.form['amount']
+    description = request.form['description']
+
+    qry = "update expense set date=%s, amount=%s, description=%s where id=%s"
+    val = (date,amount,description,session['sid2'])
+    iud(qry, val)
+    return '''<script>alert('Updated successfully');window.location='/viewexpense';</script>'''
+
+
+
+@app.route('/viewemployee')
+@login_required
 def viewemployee():
     qry="SELECT * FROM `employee`"
     res=selectall(qry)
@@ -752,7 +924,7 @@ def viewemployee():
 
 
 @app.route('/acceptorder')
-
+@login_required
 def acceptorder():
     id = request.args.get('id')
     q = "SELECT * FROM `userpd` WHERE pm_id=%s"
@@ -772,8 +944,29 @@ def acceptorder():
     else:
         return '''<script>alert('Out of stock');window.location='/userrequest';</script>'''
 
-@app.route('/rejectorder')
 
+@app.route('/acceptcancel')
+@login_required
+def acceptcancel():
+    id = request.args.get('id')
+    q = "SELECT * FROM `userpd` WHERE pm_id=%s"
+    r = selectone(q,id)
+    print(r)
+    q1 = "SELECT * FROM `stockmanage` WHERE b_id=%s"
+    r1 = selectone(q1,r[2])
+    print(r1)
+
+    s = r1[2]+r[3]
+    q3 = "update stockmanage set noofbook=%s where b_id=%s"
+    v3 = (s,r[2])
+    iud(q3,v3)
+    qry="Update userpm set status='Cancelled' where pm_id=%s"
+    iud(qry,id)
+    return '''<script>alert('Cancel accepted');window.location='/cancelrequest';</script>'''
+
+
+@app.route('/rejectorder')
+@login_required
 def rejectorder():
     id = request.args.get('id')
     qry="Update userpm set status='Rejected' where pm_id=%s"
@@ -782,38 +975,71 @@ def rejectorder():
 
 
 @app.route('/ordercancel')
-
+@login_required
 def ordercancel():
     id = request.args.get('id')
-    # q = "SELECT * FROM `paddcart` WHERE id=%s"
-    # r = selectone(q,id)
+    q = "SELECT * FROM `paddcart` WHERE id=%s"
+    r = selectone(q,id)
+    print(r)
+    if r[4]=='Requested':
+        q2 = "delete from paddcart where id=%s"
+        iud(q2,id)
+        return '''<script>alert('Cancelled');window.location='/requeststatus';</script>'''
+    elif r[4]=='Accepted':
+        qry = "Update `paddcart` set status='Cancel' where id=%s"
+        iud(qry, id)
+        return '''<script>alert('Cancelled');window.location='/requeststatus';</script>'''
+    else:
+        return '''<script>alert('Already cancelled');window.location='/requeststatus';</script>'''
 
-    qry = "Update `paddcart` set status='Cancel' where id=%s"
+
+@app.route('/delivered')
+@login_required
+def delivered():
+    id = request.args.get('id')
+    qry = "Update `userpm` set status='Delivered' where pm_id=%s"
     iud(qry, id)
-    return '''<script>alert('Cancelled');window.location='/requeststatus';</script>'''
+    return '''<script>alert('Status changed');window.location='/acceptedorders';</script>'''
 
 
 
 @app.route('/userrequest')
-
+@login_required
 def userrequest():
-    qry="SELECT * FROM `book` JOIN `userpd` ON `userpd`.`b_id`=`book`.`b_id` JOIN `userpm` ON `userpd`.`pm_id`=`userpm`.`pm_id` JOIN `customer` ON `customer`.`l_id`=`userpm`.`cust_id` where userpm.status='Requested' ORDER BY `date` DESC"
+    qry="SELECT *,DATE_FORMAT(userpm.date,'%d-%m-%Y') FROM `book` JOIN `userpd` ON `userpd`.`b_id`=`book`.`b_id` JOIN `userpm` ON `userpd`.`pm_id`=`userpm`.`pm_id` JOIN `customer` ON `customer`.`l_id`=`userpm`.`cust_id` where userpm.status='Requested' ORDER BY `date` DESC"
     res=selectall(qry)
     return  render_template("userrequest.html",val=res)
 
 
 
 @app.route('/acceptedorders')
-
+@login_required
 def acceptedorders():
-    qry="SELECT * FROM `book` JOIN `userpd` ON `userpd`.`b_id`=`book`.`b_id` JOIN `userpm` ON `userpd`.`pm_id`=`userpm`.`pm_id` JOIN `customer` ON `customer`.`l_id`=`userpm`.`cust_id` where userpm.status='Accepted' ORDER BY `date` DESC"
+    qry="SELECT *,DATE_FORMAT(userpm.date,'%d-%m-%Y') FROM `book` JOIN `userpd` ON `userpd`.`b_id`=`book`.`b_id` JOIN `userpm` ON `userpd`.`pm_id`=`userpm`.`pm_id` JOIN `customer` ON `customer`.`l_id`=`userpm`.`cust_id` where userpm.status='Accepted' ORDER BY `date` DESC"
     res=selectall(qry)
     return  render_template("Acceptedorder.html",val=res)
 
 
+@app.route('/cancelrequest')
+@login_required
+def cancelrequest():
+    qry="SELECT *,DATE_FORMAT(userpm.date,'%d-%m-%Y') FROM `book` JOIN `userpd` ON `userpd`.`b_id`=`book`.`b_id` JOIN `userpm` ON `userpd`.`pm_id`=`userpm`.`pm_id` JOIN `customer` ON `customer`.`l_id`=`userpm`.`cust_id` where userpm.status='Cancel' ORDER BY `date` DESC"
+    res=selectall(qry)
+    return  render_template("cancelrequest.html",val=res)
+
+
+
+@app.route('/orderhistory')
+@login_required
+def orderhistory():
+    qry="SELECT *,DATE_FORMAT(userpm.date,'%d-%m-%Y') FROM `book` JOIN `userpd` ON `userpd`.`b_id`=`book`.`b_id` JOIN `userpm` ON `userpd`.`pm_id`=`userpm`.`pm_id` JOIN `customer` ON `customer`.`l_id`=`userpm`.`cust_id` ORDER BY `date` DESC"
+    res=selectall(qry)
+    return  render_template("orderhistory.html",val=res)
+
+
 
 @app.route('/mypublisher')
-
+@login_required
 def mypublisher():
     qry="SELECT * FROM `d_publisher`"
     res=selectall(qry)
@@ -821,7 +1047,7 @@ def mypublisher():
 
 
 @app.route('/viewbook')
-
+@login_required
 def viewbook():
     qry="SELECT * FROM book LEFT JOIN stockmanage ON book.b_id=stockmanage.b_id WHERE book.b_id NOT IN(SELECT b_id FROM book WHERE `status`='Removed')"
     res=selectall(qry)
@@ -829,7 +1055,7 @@ def viewbook():
 
 
 @app.route('/a_viewbook1')
-
+@login_required
 def a_viewbook1():
     qry="select * from book left join stockmanage on book.b_id=stockmanage.b_id WHERE book.b_id NOT IN(SELECT b_id FROM book WHERE `status`='Removed')"
     res=selectall(qry)
@@ -837,24 +1063,25 @@ def a_viewbook1():
 
 
 @app.route('/requeststatus')
+@login_required
 def requeststatus():
-    qry="SELECT * FROM `paddcart` JOIN `p_book` ON `p_book`.`id`=`paddcart`.`bookid` ORDER BY `date` DESC"
+    qry="SELECT *,DATE_FORMAT(paddcart.date,'%d-%m-%Y'),DATE_FORMAT(paddcart.d_date,'%d-%m-%Y') FROM `paddcart` JOIN `p_book` ON `p_book`.`id`=`paddcart`.`bookid` ORDER BY `date` DESC"
     res=selectall(qry)
     return  render_template("requeststatus.html",val=res)
 
 
 @app.route('/a_viewbook2')
-
+@login_required
 def a_viewbook2():
     bid = request.args.get('id')
     session['bid'] = bid
-    qry = "SELECT `book`.*,section.*,DATE_FORMAT(book.p_year,'%d-%m-%Y') FROM `book` JOIN `section` ON `book`.`s_id`=`section`.`s_id` WHERE `book`.b_id='"+str(bid)+"'"
+    qry = "SELECT `book`.*,section.*,DATE_FORMAT(book.p_year,'%d-%m-%Y'),ROUND(AVG(`crawlresult`.`rating`),1) FROM `book` JOIN `section` ON `book`.`s_id`=`section`.`s_id` join crawlresult on `book`.`b_id`=`crawlresult`.`product_id` WHERE `book`.b_id='"+str(bid)+"'"
 
     res = selectone2(qry)
     return  render_template("a_viewbook2.html",val=res)
 
 @app.route('/vbook2')
-
+@login_required
 def vbook2():
     bid = request.args.get('id')
 
@@ -865,37 +1092,56 @@ def vbook2():
 
 
 @app.route('/cust_detail')
-
+@login_required
 def cust_detail():
     id = request.args.get('id')
-    qry = "Select * from customer where cust_id=%s"
+    qry = "Select * from customer where l_id=%s"
     res = selectone(qry,id)
     return  render_template("cust_detail.html",val=res)
 
-@app.route('/s_pbook')
 
+@app.route('/s_pbook')
+@login_required
 def s_pbook():
     s = request.args.get('S')
     qry = "SELECT `p_book`.*,`publisher`.`name` FROM `p_book` JOIN `publisher` ON `publisher`.`lid`=`p_book`.`p_id` where title like '%"+str(s)+"%' or author like '%"+str(s)+"%'"
-    res = selectone(qry,id)
+    res = selectall(qry)
     return  render_template("pbook.html",val=res)
+
+
+@app.route('/pbook')
+@login_required
+def pbook():
+    qry = "SELECT `p_book`.*,`publisher`.`name` FROM `p_book` JOIN `publisher` ON `publisher`.`lid`=`p_book`.`p_id`"
+    res = selectall(qry)
+    print(res)
+    return render_template("pbook.html",val=res)
 
 
 
 
 @app.route('/suggestion')
-
+@login_required
 def suggestion():
 
-    qry = "SELECT * from suggestion join customer where suggestion.cust_id=customer.l_id order by date desc"
+    qry = "SELECT *,DATE_FORMAT(suggestion.date,'%d-%m-%Y') from suggestion join customer where suggestion.cust_id=customer.l_id order by date desc"
     res = selectall(qry)
     return  render_template("suggestion.html",val=res)
+
+
+@app.route('/complaint')
+@login_required
+def complaint():
+
+    qry = "SELECT *,DATE_FORMAT(complaint.date,'%d-%m-%Y') from complaint join customer where complaint.cust_id=customer.l_id order by date desc"
+    res = selectall(qry)
+    return  render_template("complaint.html",val=res)
 
 
 
 
 @app.route('/rs')
-
+@login_required
 def rs():
     bid = request.args.get('id')
 
@@ -906,25 +1152,32 @@ def rs():
 
 
 @app.route('/viewbook2')
-
+@login_required
 def viewbook2():
     bid = request.args.get('id')
     session['bid'] = bid
-    qry = "SELECT `book`.*,section.*,DATE_FORMAT(book.p_year,'%d-%m-%Y') FROM `book` JOIN `section` ON `book`.`s_id`=`section`.`s_id` WHERE `book`.b_id='"+str(bid)+"'"
+    qry = "SELECT `book`.*,section.*,DATE_FORMAT(book.p_year,'%d-%m-%Y'),ROUND(AVG(`crawlresult`.`rating`),1) FROM `book` JOIN `section` ON `book`.`s_id`=`section`.`s_id` join crawlresult on `book`.`b_id`=`crawlresult`.`product_id` WHERE `book`.b_id='"+str(bid)+"'"
     res = selectone2(qry)
     return  render_template("viewbook2.html",val=res)
 
 
 @app.route('/viewsection')
-
+@login_required
 def viewsection():
     qry="SELECT * FROM `section`"
     res=selectall(qry)
     return  render_template("viewsection.html",val=res)
 
+@app.route('/viewexpense')
+@login_required
+def viewexpense():
+    qry="SELECT *,DATE_FORMAT(expense.date,'%d-%m-%Y') FROM `expense`"
+    res=selectall(qry)
+    return  render_template("viewexpense.html",val=res)
+
 
 @app.route('/viewsection2')
-
+@login_required
 def viewsection2():
     qry="SELECT * FROM `section`"
     res=selectall(qry)
@@ -934,7 +1187,7 @@ def viewsection2():
 
 
 @app.route('/addstockcode',methods=['post'])
-
+@login_required
 def addstockcode():
 
     t = request.form['title']
@@ -971,7 +1224,7 @@ def addstockcode():
 
 
 @app.route('/addbookcode',methods=['post'])
-
+@login_required
 def addbookcode():
     title = request.form['title']
     author = request.form['author']
@@ -1137,7 +1390,7 @@ def addbookcode():
 
 
 @app.route('/addsectioncode',methods=['post'])
-
+@login_required
 def addsectioncode():
     genre = request.form['Genre']
     location = request.form['Location']
@@ -1154,9 +1407,23 @@ def addsectioncode():
         return '''<script>alert('Genre already present');window.location='/addsection';</script>'''
 
 
+@app.route('/addexpensecode',methods=['post'])
+@login_required
+def addexpensecode():
+    date = request.form['date']
+    amount = request.form['amount']
+    description = request.form['description']
+
+    qry = "insert into expense values (NULL,%s,%s,%s)"
+    val = (date,description,amount)
+    iud(qry,val)
+    return '''<script>alert('Added successfully');window.location='/addexpense';</script>'''
+
+
+
 
 @app.route('/addemployeecode',methods=['post'])
-
+@login_required
 def addemployeecode():
 
     fname=request.form['fname']
@@ -1184,7 +1451,30 @@ def addemployeecode():
         qry2 = "insert into employee values (NULL,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NULL,'Present')"
         val2 = (fname,lname,gender,hname,place,post,pin,phoneno,emailid,lid,dob,jdate)
         iud(qry2,val2)
-        return '''<script>alert('Added successfully');window.location='/addemployee';</script>'''
+        qry = "SELECT `login`.`password` FROM `employee`  JOIN `login` ON `login`.`l_id` = `employee`.`l_id` WHERE emailid=%s"
+        s = selectone(qry, emailid)
+        print(s, "=============")
+        if s is None:
+            return jsonify({'task': 'invalid email'})
+        else:
+            try:
+                gmail = smtplib.SMTP('smtp.gmail.com', 587)
+                gmail.ehlo()
+                gmail.starttls()
+                gmail.login('amanbookstall3@gmail.com', 'rekluwmicbnbmjqt')
+            except Exception as e:
+                print("Couldn't setup email!!" + str(e))
+            msg = MIMEText("Your password is : " + str(s[0]))
+            print(msg)
+            msg['Subject'] = 'Your Password'
+            msg['To'] = emailid
+            msg['From'] = 'amanbookstall3@gmail.com'
+            try:
+                gmail.send_message(msg)
+            except Exception as e:
+                print("COULDN'T SEND EMAIL", str(e))
+            return '''<script>alert('Added successfully');window.location='/addemployee';</script>'''
+
     else:
         return '''<script>alert('Employee already present');window.location='/addemployee';</script>'''
 

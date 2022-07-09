@@ -5,11 +5,15 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_bookrecommendation"
+            android:id="@+id/nav_bookrecommendation2"
             android:title="Book recommendation" />
         <item
-            android:id="@+id/nav_myorder"
-            android:title="My order" />
+            android:id="@+id/nav_bookrecommendation"
+            android:title="Search book" />
+        <item
+            android:id="@+id/nav_mycart"
+            android:title="My cart" />
+
         <item
             android:id="@+id/nav_booksuggestion"
             android:title="Add book suggestion" />
@@ -17,7 +21,16 @@
             android:id="@+id/nav_addcomplaint"
             android:title="Add complaint" />
         <item
+            android:id="@+id/nav_viewcomplaint"
+            android:title="View complaint reply" />
+        <item
+            android:id="@+id/nav_myorder"
+            android:title="Order history" />
+        <item
             android:id="@+id/nav_viewprofile"
             android:title="View profile" />
+        <item
+            android:id="@+id/nav_logout1"
+            android:title="Logout" />
     </group>
 </menu>

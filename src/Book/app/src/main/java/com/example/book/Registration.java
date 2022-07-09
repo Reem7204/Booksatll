@@ -2,7 +2,6 @@ package com.example.book;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -35,7 +34,7 @@ public class Registration extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registration);
+        setContentView(R.layout.activity_userregisteration);
         e1 = (EditText) findViewById(R.id.name);
         e2 = (EditText) findViewById(R.id.place);
         e3 = (EditText) findViewById(R.id.post);
@@ -45,7 +44,7 @@ public class Registration extends AppCompatActivity {
         e7 = (EditText) findViewById(R.id.username);
         e8 = (EditText) findViewById(R.id.password);
         e9 = (EditText) findViewById(R.id.cpassword);
-        b = (Button) findViewById(R.id.button3);
+        b = (Button) findViewById(R.id.rbutton);
         sh= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         b.setOnClickListener(new View.OnClickListener() {
             @Override

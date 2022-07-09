@@ -219,12 +219,12 @@ My Account</h5>
 
                                 <!--</div>-->
                             <!--</li>-->
-                            <li class="nav-item">
-                                <a class="nav-link" href="/a_viewbook1"  aria-expanded="false" data-target="#submenu-5" aria-controls="submenu-5"><!--<i class="fas fa-fw fa-table"></i>-->View books</a>
-                                <div id="submenu-6" class="collapse submenu" style="">
-                                    
-                                </div>
-                            </li>
+                            <!--<li class="nav-item">-->
+                                <!--<a class="nav-link" href="/a_viewbook1"  aria-expanded="false" data-target="#submenu-5" aria-controls="submenu-5">&lt;!&ndash;<i class="fas fa-fw fa-table"></i>&ndash;&gt;View books</a>-->
+                                <!--<div id="submenu-6" class="collapse submenu" style="">-->
+                                    <!---->
+                                <!--</div>-->
+                            <!--</li>-->
                              <li class="nav-item">
                                 <li class="nav-item">
                                 <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-3" aria-controls="submenu-3">Direct purchase</a>
@@ -284,10 +284,60 @@ My Account</h5>
                                 <div id="submenu-10" class="collapse submenu" style="">
                                     <ul class="nav flex-column">
                                         <li class="nav-item">
-                                            <a class="nav-link" href="/userrequest">Requested orders</a>
+                                            <a class="nav-link" href="/userrequest">Requested orders &emsp;&emsp;&emsp;&emsp; {{session['req']}}</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" href="/acceptedorders">Accepted orders</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/cancelrequest">Cancel request &emsp;&emsp;&emsp;&emsp;&emsp;&nbsp; {{session['req2']}}</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/orderhistory">Order history</a>
+                                        </li>
+
+
+                                    </ul>
+                                </div>
+                            </li>
+<li class="nav-item">
+                                <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-11" aria-controls="submenu-11">View</a>
+                                <div id="submenu-11" class="collapse submenu" style="">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/a_viewbook1">Book</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/complaint">Complaint</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/suggestion">Book suggestion</a>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </li>
+                            <!--<li class="nav-item ">-->
+                                <!--<a class="nav-link" href="/suggestion"  aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4">&lt;!&ndash;<i class="fas fa-fw fa-table"></i>&ndash;&gt;View book suggestion</a>-->
+                                <!--<div id="submenu-11" class="collapse submenu" style="">-->
+
+                                <!--</div>-->
+                            <!--</li>-->
+                            <!--<li class="nav-item ">-->
+                                <!--<a class="nav-link" href="/complaint"  aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4">&lt;!&ndash;<i class="fas fa-fw fa-table"></i>&ndash;&gt;View complaint</a>-->
+                                <!--<div id="submenu-12" class="collapse submenu" style="">-->
+
+                                <!--</div>-->
+                            <!--</li>-->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-toggle="collapse" aria-expanded="false" data-target="#submenu-13" aria-controls="submenu-13">Expense</a>
+                                <div id="submenu-13" class="collapse submenu" style="">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/addexpense">Add expense</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/viewexpense">View expense</a>
                                         </li>
 
 
@@ -296,25 +346,7 @@ My Account</h5>
                             </li>
 
                             <li class="nav-item ">
-                                <a class="nav-link" href="/suggestion"  aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4"><!--<i class="fas fa-fw fa-table"></i>-->View book suggestion</a>
-                                <div id="submenu-11" class="collapse submenu" style="">
-
-                                </div>
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link" href="#"  aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4"><!--<i class="fas fa-fw fa-table"></i>-->View complaint</a>
-                                <div id="submenu-12" class="collapse submenu" style="">
-
-                                </div>
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link" href="#"  aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4"><!--<i class="fab fa-fw fa-wpforms"></i>-->Add expense</a>
-                                <div id="submenu-13" class="collapse submenu" style="">
-
-                                </div>
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link" href="#"  aria-expanded="false" data-target="#submenu-4" aria-controls="submenu-4"><!--<i class="fas fa-fw fa-chart-pie"></i>-->View report</a>
+                                <a class="nav-link" href="/report"  aria-expanded="false" data-target="#submenu-14" aria-controls="submenu-14"><!--<i class="fas fa-fw fa-chart-pie"></i>-->Report</a>
                                 <div id="submenu-14" class="collapse submenu" style="">
 
                                 </div>

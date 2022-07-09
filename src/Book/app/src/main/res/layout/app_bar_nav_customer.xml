@@ -15,13 +15,34 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#281E5D"
+            android:background="#006064"
             app:popupTheme="@style/Theme.Book.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_nav_publisher" />
+    <include
 
+        layout="@layout/content_nav_publisher" />
+
+    <TableRow
+        android:id="@+id/tableRow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:paddingTop="350dp">
+
+    </TableRow>
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:text="Aman bookstall"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_anchor="@+id/tableRow"
+        app:layout_anchorGravity="center" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

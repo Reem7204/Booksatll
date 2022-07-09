@@ -1,0 +1,30 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" >
+                            <div class="card"  >
+                                <div class="card-body">
+<h2 align="center">Reply</h2>
+<form method="post" action="/addcomplaint">
+  <div class="form-group row">
+                                            <label for="txt1" class="col-3 col-lg-2 col-form-label text-right">Complaint </label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt1" name="complaint" type="text" required  class="form-control" value="{{val[2]}}" readonly>
+                                            </div>
+                                        </div>
+  <div class="form-group row">
+                                            <label for="txt2" class="col-3 col-lg-2 col-form-label text-right">Reply </label>
+                                            <div class="col-9 col-lg-10">
+                                                <input id="txt2" name="reply" type="text" required  class="form-control" value="{{val[3]}}">
+                                            </div>
+                                        </div>
+
+ <p class="text-right">
+  <input name="submit" type="submit" value="Add" class="btn btn-space btn-primary"/>
+ </p>
+</form>
+                                </div>
+                            </div>
+</div>
+
+{% endblock %}

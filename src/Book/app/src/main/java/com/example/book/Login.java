@@ -1,7 +1,9 @@
 package com.example.book;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,9 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Login extends AppCompatActivity {
-    Button b1;
+    Button b1, b2;
     EditText e1, e2;
-    TextView t1, t2;
+    TextView t1, t2, t3;
     String uname, pass, url;
     SharedPreferences sh;
     @Override
@@ -37,10 +39,11 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         b1 = (Button) findViewById(R.id.button2);
+        b2 = (Button) findViewById(R.id.button3);
         e1 = (EditText) findViewById(R.id.et1);
         e2 = (EditText) findViewById(R.id.et2);
-        t1 = (TextView) findViewById(R.id.tv1);
-        t2 = (TextView) findViewById(R.id.tv2);
+
+        t3 = (TextView) findViewById(R.id.tv3);
         sh= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +71,11 @@ public class Login extends AppCompatActivity {
                                 edp.putString("lid", lid);
                                 edp.commit();
                                 if (type.equals("Publisher")) {
+
+                                    Intent ikk=new Intent(getApplicationContext(),Notify.class);
+
+                                    startService(ikk);
+
                                     Intent ik = new Intent(getApplicationContext(), nav_publisher.class);
                                     startActivity(ik);
                                 }
@@ -90,8 +98,7 @@ public class Login extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
-
+                        Log.e("ERR","",error);
                         Toast.makeText(getApplicationContext(), "Error" + error, Toast.LENGTH_LONG).show();
                     }
                 }) {
@@ -108,13 +115,43 @@ public class Login extends AppCompatActivity {
 
             }
         });
-        t1.setOnClickListener(new View.OnClickListener() {
+        b2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent ik3 = new Intent(getApplicationContext(), Registration.class);
-                startActivity(ik3);
+                AlertDialog.Builder ald = new AlertDialog.Builder(Login.this);
+                ald.setTitle("Select option")
+                        .setPositiveButton("User", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent i2 = new Intent(getApplicationContext(),userregisteration.class);
+                                startActivity(i2);
+                            }
+                        })
+                        .setNegativeButton("Publisher", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent i1 = new Intent(getApplicationContext(),register1.class);
+                                startActivity(i1);
+                            }
+                        });
+                AlertDialog al = ald.create();
+                al.show();
+            }
+        });
+        t3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent ik = new Intent(getApplicationContext(), forgotpassword.class);
+                startActivity(ik);
             }
         });
 
+
+    }
+    public void onBackPressed(){
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
     }
 }

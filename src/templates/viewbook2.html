@@ -64,7 +64,7 @@ function showDivs(n) {
                                 <!--<img src="static/bookpic/{{val[9]}}" style="width:300px;height:400px;">-->
         <!--</div>-->
 <div style="margin:6px; font-size:15px;">
-    <table>
+    <table cellpadding="4px">
        <tr> <th> Title </th><td>{{val[1]}}</td></tr>
       <tr>  <th>Author </th><td> {{val[2]}} </td></tr>
        <tr> <th>Publisher </th><td> {{val[3]}} </td></tr>
@@ -73,13 +73,15 @@ function showDivs(n) {
       <tr>  <th>Page number </th><td>{{val[7]}} </td></tr>
       <tr>  <th>Price </th><td>{{val[8]}} </td></tr>
       <tr><th>ISBN </th><td> {{val[12]}} </td></tr>
+        <tr><th>Rating </th><td> {{val[18]}} </td></tr>
       <tr valign="top">  <th>Description </th><td> {{val[6]}} </td></tr>
      </table>
     <br>
     <div class="form-group row text-right">
                                             <div class="col col-sm-10 col-lg-9 offset-sm-1 offset-lg-0">
                                                 <form action="/updatebook" method="get">
-                                                    <button type="submit" class="btn btn-space btn-primary">Update</button>
+                                                    <button type="submit" name="submit" value="update" class="btn btn-space btn-primary">Update</button>
+                                                    <a href="/comment?id={{val[0]}}" class="btn btn-space btn-primary">Comment</a>
 
 </form>
                                             </div>

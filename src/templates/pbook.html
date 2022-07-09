@@ -9,7 +9,7 @@ tr:nth-child(odd) {background: #FFF}
   display: flex;
   flex-direction: column;
   order:2;
-  background-color: DodgerBlue;
+
 }
 
 .flex-container > tr {
@@ -49,14 +49,14 @@ tr:nth-child(odd) {background: #FFF}
                             <div class="card">
                                 <h5 class="card-header">Details of the book</h5>
                                 <div class="card-body">
-                                   <form method="post" action="/s_pbook" align="center">
+                                   <form method="get" action="/s_pbook" align="center">
                                        <input type="text" name="S" style="width:350px;">&nbsp;&nbsp;&nbsp;&nbsp;
                                        <input type="submit" value="Search" name="Search" class="btn btn-primary btn-sm" style="height:28px;">
                                    </form> <br><br>
                                     <div class="flex-container">
                                         <div class="flex-container">
 
-<table >
+<table>
 <tr>
     {% for i in range(0,val|length) %}
 {% if i!=0 %}

@@ -1,0 +1,40 @@
+{% extends 'blankpage.html' %}
+{% block body %}
+
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" >
+                            <div class="card"  >
+                                <div class="card-body">
+<h2 align="center">Add expense</h2>
+<form method="post" action="/addexpensecode">
+<table cellpadding="10px">
+<tr><td class="col-3 col-lg-2 col-form-label text-right">
+
+    Date</td>
+                                          <td>  <div class="col-9 col-lg-10">
+                                                <input id="txt1" type="date" name="date"  required class="form-control" style="width: 250px;" max="{{val1}}">
+                                          </div></td>
+
+   <td class="col-3 col-lg-2 col-form-label text-right">
+       Amount</td >
+                                           <td> <div class="col-9 col-lg-10">
+                                                <input id="txt2" type="text" name="amount"  required pattern="[0-9.]{1,25}" class="form-control" title="Only the combination of numbers are allowed" style="width: 250px;">
+                                           </div></td></tr>
+        <tr>
+<td class="col-3 col-lg-2 col-form-label text-right"> Description</td>
+                                            <td colspan="3">
+                                                <div class="col-9 col-lg-10">
+                                                <textarea required name="description" class="form-control" style="width:690px;">
+
+                                                </textarea>
+                                                <!--<input type="text" required name="description" class="form-control">-->
+                                                </div> </td></tr>
+</table>
+ <p class="text-center">
+  <input name="submit" type="submit" value="Add" class="btn btn-space btn-primary"/>
+ </p>
+</form>
+                                </div>
+                            </div>
+</div>
+
+{% endblock %}
